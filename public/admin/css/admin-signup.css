@@ -1,0 +1,76 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+}
+
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 40px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+}
+
+.nav-left a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: black;
+}
+
+.nav-center {
+  font-weight: bold;
+}
+
+.nav-right span {
+  margin-left: 15px;
+}
+
+
+.container {
+  text-align: left;
+  margin-top: 50px;
+}
+
+.account-title {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.privacy {
+  font-size: 12px;
+  color: #777;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.card {
+  background: #fff;
+  width: 300px;
+  margin: auto;
+  padding: 30px;
+  border-radius: 8px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.login-link {
+  margin-top: 15px;
+  font-size: 12px;
+}

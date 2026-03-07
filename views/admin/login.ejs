@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login</title>
+
+  <link rel="stylesheet" href="/admin/css/admin-login.css">
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="title">
+     BLUNT Admin Panel
+  </div>
+
+  <div class="card">
+    <h2>Admin Log In</h2>
+    <p>Welcome back. Please enter your credentials to log in.</p>
+
+    <form action="/admin/login" method="POST">
+
+      <label>Email Address</label>
+      <input type="email" name="email" placeholder="Enter your email" required>
+
+      <label>
+        Password
+        <a href="#" class="forgot">Forgot Password?</a>
+      </label>
+      <input type="password" name="password" placeholder="Enter your password" required>
+
+      <button class="btn" type="submit">Sign In</button>
+
+    </form>
+  </div>
+
+</div>
+
+<script src="/js/admin-login.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>My Addresses</title>
+
+<link rel="stylesheet" href="/user/css/layout.css">
+<link rel="stylesheet" href="/user/css/profile.css">
+
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+
+<body>
+
+<%- include('../partials/header') %>
+
+<div class="profile-container">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+<div class="user-card">
+<div class="avatar">
+<i class="ri-user-line"></i>
+</div>
+
+<h3><%= user?.name %></h3>
+<p><%= user?.email %></p>
+</div>
+
+<ul class="menu">
+
+<li class="active">
+<a href="/user/profile">
+<i class="ri-user-line"></i>
+Personal Information
+</a>
+</li>
+
+<li>
+<a href="/user/addresses">
+<i class="ri-map-pin-line"></i>
+Addresses
+</a>
+</li>
+
+<li>
+<i class="ri-heart-line"></i>
+Wishlist
+</li>
+
+<li>
+<i class="ri-bank-card-line"></i>
+Payment Methods
+</li>
+
+<li>
+<i class="ri-shopping-bag-line"></i>
+Order History
+</li>
+
+<li class="logout">
+<i class="ri-logout-box-line"></i>
+<a href="/user/logout">Logout</a>
+</li>
+
+</ul>
+
+</aside>
+
+<!-- MAIN CONTENT -->
+
+<main class="content">
+
+<div class="card">
+
+<div class="card-header">
+
+<h2>Saved Addresses</h2>
+
+<a class="add-btn" href="/user/add-address">Add New Address</a>
+
+</div>
+
+<% if(addresses.length === 0){ %>
+
+<p>No addresses saved.</p>
+
+<% } %>
+
+<% addresses.forEach(address => { %>
+
+<div class="address-card">
+
+<div class="address-left">
+
+<h4><%= address.type || "Home" %></h4>
+
+<p>
+<%= address.house %>, <%= address.area %><br>
+<%= address.city %>, <%= address.state %> - <%= address.pincode %>
+</p>
+
+<p><%= address.phone %></p>
+
+</div>
+
+<div class="address-right">
+
+<a href="/user/edit-address/<%= address._id %>">Edit</a>
+
+<a class="delete-btn" href="/user/delete-address/<%= address._id %>">Delete</a>
+
+</div>
+
+</div>
+
+<% }) %>
+
+</div>
+
+</main>
+
+</div>
+
+<%- include('../partials/footer') %>
+
+</body>
+
+</html>

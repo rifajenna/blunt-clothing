@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>User Profile</title>
+
+<link rel="stylesheet" href="/user/css/layout.css">
+<link rel="stylesheet" href="/user/css/profile.css">
+
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+
+<body>
+
+<%- include('../partials/header') %>
+
+<div class="profile-container">
+
+    <aside class="sidebar">
+
+        <div class="user-card">
+            <div class="avatar">
+                <i class="ri-user-line"></i>
+            </div>
+
+            <h3><%= user.name %></h3>
+            <p><%= user.email %></p>
+        </div>
+
+        <ul class="menu">
+
+           <li>
+        <a href="/user/profile">
+        <i class="ri-user-line"></i>
+            Personal Information
+        </a>
+        </li>
+
+
+           <li>
+            <a href="/user/addresses">
+            <i class="ri-map-pin-line"></i>
+                Addresses
+            </a>
+            </li>
+
+            <li>
+                <i class="ri-heart-line"></i>
+                Wishlist
+            </li>
+
+            <li>
+                <i class="ri-bank-card-line"></i>
+                Payment Methods
+            </li>
+
+            <li>
+                <i class="ri-shopping-bag-line"></i>
+                Order History
+            </li>
+
+            <li class="logout">
+                <i class="ri-logout-box-line"></i>
+                <a href="/user/logout">Logout</a>
+            </li>
+
+        </ul>
+
+    </aside>
+
+
+    <main class="content">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h2>Personal Information</h2>
+                <a href="/user/edit-profile">Edit</a>
+            </div>
+
+            <div class="info-grid">
+
+                <div>
+                    <label>Full Name</label>
+                    <p><%= user.name %></p>
+                </div>
+
+                <div>
+                    <label>Email Address</label>
+                    <p><%= user.email %></p>
+                </div>
+
+                <div>
+                    <label>Phone</label>
+                    <p><%= user.phone || "Not added" %></p>
+                </div>
+
+                <div>
+                    <label>Member Since</label>
+                    <p><%= user.createdAt.toDateString() %></p>
+                </div>
+
+                <div>
+<label>Password</label>
+<p>******** 
+<a href="/user/change-password" class="change-pass">Change</a>
+</p>
+</div>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-cards">
+
+            <div class="small-card">
+                <h4>Wallet Balance</h4>
+                <p class="amount">₹500</p>
+                <a href="#">See details →</a>
+            </div>
+
+            <div class="small-card">
+                <h4>Total Referrals</h4>
+                <p class="amount">12</p>
+                <a href="#">See details →</a>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<%- include('../partials/footer') %>
+
+</body>
+
+</html>

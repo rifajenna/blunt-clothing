@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>BLUNT</title>
+
+<link rel="stylesheet" href="/css/layout.css">
+<link rel="stylesheet" href="/user/css/home.css">
+
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+
+<body>
+
+<%- include('../partials/header') %>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<div class="hero-content">
+
+<h1>Welcome <%= user.name %> 👋</h1>
+<p>Discover premium streetwear designed for bold personalities.</p>
+
+<a href="/shop" class="btn">Shop Now</a>
+
+</div>
+
+</section>
+
+
+<!-- CATEGORIES -->
+
+<section class="categories">
+
+<h2>Shop By Category</h2>
+
+<div class="category-grid">
+
+<div class="category-card">
+<img src="/images/shirt.jpg">
+<h3>Shirts</h3>
+</div>
+
+<div class="category-card">
+<img src="/images/tshirt.jpg">
+<h3>T-Shirts</h3>
+</div>
+
+<div class="category-card">
+<img src="/images/jacket.jpg">
+<h3>Jackets</h3>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- FEATURED PRODUCTS -->
+
+<section class="products">
+
+<h2>Featured Products</h2>
+
+<div class="product-grid">
+
+<div class="product-card">
+<img src="/images/product1.jpg">
+<h4>Black Classic Shirt</h4>
+<p>₹1,999</p>
+<button>Add to Cart</button>
+</div>
+
+<div class="product-card">
+<img src="/images/product2.jpg">
+<h4>Oversized Tee</h4>
+<p>₹1,299</p>
+<button>Add to Cart</button>
+</div>
+
+<div class="product-card">
+<img src="/images/product3.jpg">
+<h4>Denim Jacket</h4>
+<p>₹3,499</p>
+<button>Add to Cart</button>
+</div>
+
+</div>
+
+</section>
+
+<%- include('../partials/footer') %>
+
+</body>
+</html>

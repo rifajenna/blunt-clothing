@@ -1,0 +1,100 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f4f4f4;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 40px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+}
+
+.nav-left a {
+  margin-left: 10px;
+  text-decoration: none;
+  color: black;
+}
+
+.nav-center {
+  font-weight: bold;
+}
+
+/* MAIN */
+.main {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.signup-card {
+  width: 350px;
+  background: white;
+  padding: 30px;
+  margin: 20px auto;
+  border-radius: 8px;
+}
+
+.signup-card h3 {
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+}
+
+.signup-btn {
+  width: 100%;
+  padding: 12px;
+  background: black;
+  color: white;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.signup-btn:hover {
+  background: #222;
+}
+
+.login-link {
+  margin-top: 15px;
+  font-size: 12px;
+}
+
+/* FOOTER */
+.footer {
+  background: black;
+  color: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 30px;
+  margin-top: 40px;
+}
+
+.password-field{
+position:relative;
+}
+
+.password-field input{
+width: 100%;
+padding: 12px;
+padding-right: 45px; 
+border: 1px solid #ccc;
+box-sizing: border-box;
+}
+
+.toggle-password{
+position:absolute;
+right:10px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+font-size:18px;
+color:#555;
+}

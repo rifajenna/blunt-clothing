@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>User Signup</title>
+
+<link rel="stylesheet" href="/user/css/user-signup.css">
+
+<!-- Remix Icons -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+
+.password-field{
+position:relative;
+}
+
+.password-field input{
+width:100%;
+padding:10px;
+padding-right:40px;
+}
+
+.toggle-password{
+position:absolute;
+right:10px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+font-size:18px;
+color:#555;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="main">
+
+<div class="signup-card">
+
+<h3>Create Account</h3>
+
+<form method="POST" action="/user/signup">
+
+<input name="name" placeholder="Name" required>
+
+<input name="email" placeholder="Email" required>
+
+<div class="password-field">
+
+<input 
+name="password" 
+type="password" 
+id="password"
+placeholder="Password" 
+required>
+
+<i class="ri-eye-line toggle-password"></i>
+
+</div>
+
+<button class="signup-btn">Signup</button>
+
+</form>
+
+<p class="login-link">
+Already have an account?
+<a href="/user/login">Login here</a>
+</p>
+
+</div>
+
+</div>
+
+<script>
+
+const toggle = document.querySelector(".toggle-password")
+const password = document.getElementById("password")
+
+toggle.addEventListener("click",()=>{
+
+if(password.type === "password"){
+password.type = "text"
+toggle.classList.replace("ri-eye-line","ri-eye-off-line")
+}else{
+password.type = "password"
+toggle.classList.replace("ri-eye-off-line","ri-eye-line")
+}
+
+})
+
+</script>
+
+</body>
+</html>
