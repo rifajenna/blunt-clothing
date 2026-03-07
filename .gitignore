@@ -8,3 +8,8 @@ node_modules/
 # IDE files
 .vscode/
 .idea/
+
+
+.package.json
+.package-lock.json
+
