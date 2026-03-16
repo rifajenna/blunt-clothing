@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verify OTP | Blunt Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f9fafb;
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .brand-icon {
+      width: 30px; height: 30px;
+      border: 2px solid #111827;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      font-style: normal;
+      color: #111827;
+    }
+
+    .brand-name { font-size: 0.9rem; font-weight: 700; color: #111827; }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+
+    .card h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; text-align: left; }
+
+    .card p {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-bottom: 24px;
+      text-align: left;
+      line-height: 1.55;
+    }
+
+    .alert {
+      padding: 10px 13px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      margin-bottom: 16px;
+      display: none;
+      text-align: left;
+    }
+
+    .alert.show { display: block; }
+    .alert-error   { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+    .alert-success { background: #f0fdf4; color: #10b981; border: 1px solid #bbf7d0; }
+
+    .otp-label {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #374151;
+      text-align: left;
+      margin-bottom: 10px;
+    }
+
+    .otp-boxes {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .otp-boxes input {
+      width: 46px; height: 52px;
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      background: #f9fafb;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      color: #111827;
+      outline: none;
+      transition: border-color 0.15s;
+      caret-color: transparent;
+    }
+
+    .otp-boxes input:focus { border-color: #111827; background: #fff; }
+    .otp-boxes input.filled { border-color: #9ca3af; }
+    .otp-boxes input.error  { border-color: #ef4444; }
+
+    .resend-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+
+    .resend-btn {
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      color: #6b7280;
+      cursor: pointer;
+      transition: color 0.15s;
+      padding: 0;
+    }
+
+    .resend-btn:hover { color: #111827; }
+    .resend-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    #timerText { font-size: 0.78rem; color: #9ca3af; }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #111827;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.15s;
+    }
+
+    .btn:hover { opacity: 0.88; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: none;
+    }
+
+    .spinner.show { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .back-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 18px;
+      font-size: 0.82rem;
+      color: #6b7280;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .back-link:hover { color: #111827; }
+  </style>
+</head>
+<body>
+
+  <div class="brand">
+    <i class="brand-icon">ℹ</i>
+    <span class="brand-name">BLUNT Admin</span>
+  </div>
+
+  <div class="card">
+    <h2>Check your email</h2>
+    <p>We've sent a 6-digit code to your email. Please enter it below to reset your password.</p>
+
+    <div id="alertBox" class="alert"></div>
+
+    <div class="otp-label">Verification Code</div>
+
+    <div class="otp-boxes">
+      <input type="text" maxlength="1" class="otp-input" inputmode="numeric"/>
+      <input type="text" maxlength="1" class="otp-input" inputmode="numeric"/>
+      <input type="text" maxlength="1" class="otp-input" inputmode="numeric"/>
+      <input type="text" maxlength="1" class="otp-input" inputmode="numeric"/>
+      <input type="text" maxlength="1" class="otp-input" inputmode="numeric"/>
+      <input type="text" maxlength="1" class="otp-input" inputmode="numeric"/>
+    </div>
+
+    <div class="resend-row">
+      <span id="timerText">Resend in 0:30</span>
+      <button class="resend-btn" id="resendBtn" disabled style="margin-left:8px;">Resend</button>
+    </div>
+
+    <button class="btn" id="verifyBtn">
+      <span id="btnText">Verify Code</span>
+      <div class="spinner" id="spinner"></div>
+    </button>
+
+    <a href="/admin/login" class="back-link">← Back to Sign In</a>
+  </div>
+
+<script>
+  const inputs = document.querySelectorAll('.otp-input');
+
+  // Auto-focus next box
+  inputs.forEach((input, i) => {
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/\D/g, '');
+      if (input.value && i < inputs.length - 1) inputs[i + 1].focus();
+      input.classList.toggle('filled', !!input.value);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && i > 0) {
+        inputs[i - 1].focus();
+        inputs[i - 1].value = '';
+        inputs[i - 1].classList.remove('filled');
+      }
+    });
+
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+      pasted.split('').forEach((char, idx) => {
+        if (inputs[idx]) {
+          inputs[idx].value = char;
+          inputs[idx].classList.add('filled');
+        }
+      });
+      inputs[Math.min(pasted.length, 5)].focus();
+    });
+  });
+
+  // Timer
+  let seconds = 30;
+  const timerText = document.getElementById('timerText');
+  const resendBtn = document.getElementById('resendBtn');
+
+  const timer = setInterval(() => {
+    seconds--;
+    if (seconds <= 0) {
+      clearInterval(timer);
+      timerText.textContent = '';
+      resendBtn.disabled = false;
+    } else {
+      timerText.textContent = `Resend in 0:${seconds.toString().padStart(2,'0')}`;
+    }
+  }, 1000);
+
+  resendBtn.addEventListener('click', async () => {
+    try {
+      await axios.post('/admin/forgot-password', { email: '' });
+    } catch {}
+    showAlert('A new OTP has been sent to your email.', 'success');
+  });
+
+  // Verify
+  document.getElementById('verifyBtn').addEventListener('click', async () => {
+    const otp = Array.from(inputs).map(i => i.value).join('');
+
+    inputs.forEach(i => i.classList.remove('error'));
+    document.getElementById('alertBox').classList.remove('show');
+
+    if (otp.length < 6) {
+      inputs.forEach(i => { if (!i.value) i.classList.add('error'); });
+      showAlert('Please enter the complete 6-digit code');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await axios.post('/admin/verify-otp', { otp });
+      showAlert(res.data.message, 'success');
+      setTimeout(() => window.location.href = res.data.redirectUrl, 800);
+    } catch (err) {
+      showAlert(err.response?.data?.message || 'Invalid OTP');
+      inputs.forEach(i => i.classList.add('error'));
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  function setLoading(val) {
+    document.getElementById('verifyBtn').disabled = val;
+    document.getElementById('btnText').textContent = val ? 'Verifying...' : 'Verify Code';
+    document.getElementById('spinner').classList.toggle('show', val);
+  }
+
+  function showAlert(msg, type = 'error') {
+    const box = document.getElementById('alertBox');
+    box.textContent = msg;
+    box.className = `alert alert-${type} show`;
+  }
+</script>
+</body>
+</html>

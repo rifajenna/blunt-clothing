@@ -1,0 +1,177 @@
+<style>
+  .page-header { margin-bottom: 24px; }
+  .page-header h2 { font-size: 1.35rem; font-weight: 700; color: #111827; }
+  .page-header p  { font-size: 0.875rem; color: #6b7280; margin-top: 2px; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: box-shadow 0.15s;
+  }
+
+  .stat-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+
+  .stat-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .si-blue   { background: #eff6ff; color: #3b82f6; }
+  .si-green  { background: #f0fdf4; color: #10b981; }
+  .si-yellow { background: #fffbeb; color: #f59e0b; }
+  .si-purple { background: #faf5ff; color: #8b5cf6; }
+
+  .stat-info { display: flex; flex-direction: column; gap: 2px; }
+  .stat-label { font-size: 0.78rem; color: #6b7280; font-weight: 500; }
+  .stat-value { font-size: 1.4rem; font-weight: 700; color: #111827; }
+  .stat-sub   { font-size: 0.72rem; color: #9ca3af; }
+
+  .row-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .info-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px 22px;
+  }
+
+  .info-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 14px; color: #111827; }
+
+  .dummy-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 0.85rem;
+  }
+
+  .dummy-row:last-child { border-bottom: none; }
+  .dummy-row .dr-left { display: flex; align-items: center; gap: 10px; color: #374151; }
+  .dummy-row .dr-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+  }
+
+  .dr-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .dr-badge.green { background: #f0fdf4; color: #10b981; }
+  .dr-badge.yellow { background: #fffbeb; color: #f59e0b; }
+  .dr-badge.red { background: #fef2f2; color: #ef4444; }
+</style>
+
+<div class="page-header">
+  <h2>Dashboard</h2>
+  <p>Welcome back, John Doe</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon si-blue"><i class="bi bi-people-fill"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Total Users</span>
+      <span class="stat-value">—</span>
+      <span class="stat-sub">Registered users</span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon si-green"><i class="bi bi-bag-fill"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Total Orders</span>
+      <span class="stat-value">—</span>
+      <span class="stat-sub">All time</span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon si-yellow"><i class="bi bi-box-seam-fill"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Products</span>
+      <span class="stat-value">—</span>
+      <span class="stat-sub">In catalogue</span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon si-purple"><i class="bi bi-currency-rupee"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Revenue</span>
+      <span class="stat-value">—</span>
+      <span class="stat-sub">Total earned</span>
+    </div>
+  </div>
+</div>
+
+<!-- Info cards -->
+<div class="row-cards">
+  <div class="info-card">
+    <h3>Recent Orders</h3>
+    <div class="dummy-row">
+      <span class="dr-left"><div class="dr-avatar">JC</div> Jane Cooper</span>
+      <span class="dr-badge green">Delivered</span>
+    </div>
+    <div class="dummy-row">
+      <span class="dr-left"><div class="dr-avatar">WW</div> Wade Warren</span>
+      <span class="dr-badge yellow">Pending</span>
+    </div>
+    <div class="dummy-row">
+      <span class="dr-left"><div class="dr-avatar">EH</div> Esther Howard</span>
+      <span class="dr-badge green">Delivered</span>
+    </div>
+    <div class="dummy-row">
+      <span class="dr-left"><div class="dr-avatar">CW</div> Cameron W.</span>
+      <span class="dr-badge red">Cancelled</span>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <h3>Top Products</h3>
+    <div class="dummy-row">
+      <span class="dr-left"><div class="dr-avatar" style="border-radius:6px;background:#eff6ff;color:#3b82f6;"><i class="bi bi-box"></i></div> Product A</span>
+      <span style="font-size:0.82rem;color:#6b7280;">124 sold</span>
+    </div>
+    <div class="dummy-row">
+      <span class="dr-left"><div class="dr-avatar" style="border-radius:6px;background:#f0fdf4;color:#10b981;"><i class="bi bi-box"></i></div> Product B</span>
+      <span style="font-size:0.82rem;color:#6b7280;">98 sold</span>
+    </div>
+    <div class="dummy-row">
+      <span class="dr-left"><div class="dr-avatar" style="border-radius:6px;background:#fffbeb;color:#f59e0b;"><i class="bi bi-box"></i></div> Product C</span>
+      <span style="font-size:0.82rem;color:#6b7280;">76 sold</span>
+    </div>
+    <div class="dummy-row">
+      <span class="dr-left"><div class="dr-avatar" style="border-radius:6px;background:#faf5ff;color:#8b5cf6;"><i class="bi bi-box"></i></div> Product D</span>
+      <span style="font-size:0.82rem;color:#6b7280;">54 sold</span>
+    </div>
+  </div>
+</div>

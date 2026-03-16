@@ -1,31 +1,42 @@
 import express from "express";
-import { 
-  showLogin, 
-  login, 
-  showSignup, 
-  signup,
+import { adminLayout } from "../../middlewares/layoutMiddleware.js";
+import { isAdminLoggedIn } from "../../middlewares/adminAuth.js";
+import wrapAsync from "../../utils/wrapAsync.js";
+import {
+  showLogin,
+  login,
   getUsers,
   toggleBlockUser,
-  logoutUser
+  logoutUser,
+  getDashboard,
+  showForgotPassword,
+  sendForgotOtp,
+  showVerifyOtp,
+  verifyOtp,
+  showNewPassword,
+  resetPassword,
 } from "../../controllers/AdminController.js";
-
-import { isAdminLoggedIn } from "../../middlewares/adminAuth.js";
 
 const router = express.Router();
 
+router.use(adminLayout);
+
+// Auth
 router.get("/login", showLogin);
-router.post("/login", login);
+router.post("/login", wrapAsync(login));
+router.get("/logout", logoutUser);
 
-router.get("/signup", showSignup);
-router.post("/signup", signup);
+// Forgot password flow
+router.get("/forgot-password", showForgotPassword);
+router.post("/forgot-password", wrapAsync(sendForgotOtp));
+router.get("/verify-otp", showVerifyOtp);
+router.post("/verify-otp", wrapAsync(verifyOtp));
+router.get("/new-password", showNewPassword);
+router.post("/new-password", wrapAsync(resetPassword));
 
-
-
-router.get("/users", isAdminLoggedIn, getUsers);
-
-router.patch("/block-user/:id", isAdminLoggedIn, toggleBlockUser);
-
-router.get("/logout", isAdminLoggedIn, logoutUser);
-
+// Protected routes
+router.get("/dashboard", isAdminLoggedIn, getDashboard);
+router.get("/users", isAdminLoggedIn, wrapAsync(getUsers));
+router.patch("/block-user/:id", isAdminLoggedIn, wrapAsync(toggleBlockUser));
 
 export default router;
