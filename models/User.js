@@ -9,16 +9,22 @@ const userSchema = new mongoose.Schema({
     unique: true
   },
 
-  password: String,
+  password: {
+    type: String
+  },
 
-  phone: String,   // ✅ new
+  phone: String,
 
-  profileImage: {  // ✅ new
+  profileImage: {
     type: String,
     default: "/images/default-user.png"
   },
 
-  address: {       // ✅ new
+  googleId: {
+    type: String
+  },
+
+  address: {
     house: String,
     city: String,
     state: String,
@@ -33,4 +39,3 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);
-

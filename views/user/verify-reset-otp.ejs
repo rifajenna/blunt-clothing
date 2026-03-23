@@ -4,8 +4,8 @@
   <div class="auth-card">
     <div class="auth-brand"><h1>BLUNT</h1><p>My Account</p></div>
     <div id="alertBox" class="alert"></div>
-    <h2 class="auth-title">Verify OTP</h2>
-    <p class="auth-subtitle">We've sent a 6-digit verification code to your email. Please check your inbox.</p>
+    <h2 class="auth-title">Check your email</h2>
+    <p class="auth-subtitle">We've sent a 6-digit code to your email. Enter it below to continue.</p>
 
     <div class="otp-label">Verification Code</div>
     <div class="otp-boxes">
@@ -23,11 +23,11 @@
     </div>
 
     <button class="btn-primary" id="verifyBtn">
-      <span id="btnText">Verify OTP</span>
+      <span id="btnText">Verify Code</span>
       <div class="spinner" id="spinner"></div>
     </button>
 
-    <div class="auth-footer"><a href="/user/signup">← Back to Signup</a></div>
+    <div class="auth-footer"><a href="/user/login">← Back to Login</a></div>
   </div>
 </div>
 
@@ -69,7 +69,7 @@
 
   resendBtn.addEventListener('click', async () => {
     try {
-      const res = await axios.post('/user/resend-otp');
+      const res = await axios.post('/user/resend-reset-otp');
       showAlert(res.data.message, 'success');
       resendBtn.disabled = true;
       startTimer(60);
@@ -87,7 +87,7 @@
     }
     setLoading(true);
     try {
-      const res = await axios.post('/user/verify-otp', { otp });
+      const res = await axios.post('/user/verify-reset-otp', { otp });
       showAlert(res.data.message, 'success');
       setTimeout(() => window.location.href = res.data.redirectUrl, 800);
     } catch (err) {
@@ -98,7 +98,7 @@
 
   function setLoading(val) {
     document.getElementById('verifyBtn').disabled = val;
-    document.getElementById('btnText').textContent = val ? 'Verifying...' : 'Verify OTP';
+    document.getElementById('btnText').textContent = val ? 'Verifying...' : 'Verify Code';
     document.getElementById('spinner').classList.toggle('show', val);
   }
 

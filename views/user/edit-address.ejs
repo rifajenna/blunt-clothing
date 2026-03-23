@@ -1,126 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<title>Edit Address</title>
-
-<link rel="stylesheet" href="/user/css/layout.css">
-<link rel="stylesheet" href="/user/css/profile.css">
-
-<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Edit Address</title>
+  <link rel="stylesheet" href="/user/css/layout.css">
+  <link rel="stylesheet" href="/user/css/profile.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
-
 <body>
 
-<%- include('../partials/header') %>
+<%- include('partials/header') %>
 
 <div class="profile-container">
+  <aside class="sidebar">
+    <div class="user-card">
+      <div class="avatar"><i class="ri-user-line"></i></div>
+      <h3><%= user?.name %></h3>
+      <p><%= user?.email %></p>
+    </div>
+    <ul class="menu">
+      <li><a href="/user/profile"><i class="ri-user-line"></i> Personal Information</a></li>
+      <li class="active"><a href="/user/addresses"><i class="ri-map-pin-line"></i> Addresses</a></li>
+      <li class="logout"><a href="/user/logout"><i class="ri-logout-box-line"></i> Logout</a></li>
+    </ul>
+  </aside>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
+  <main class="content">
+    <div class="card">
+      <h2>Edit Address</h2>
 
-<div class="user-card">
-<div class="avatar">
-<i class="ri-user-line"></i>
+      <div id="alertBox" class="alert" style="display:none;"></div>
+
+      <div class="address-form">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="name" value="<%= address.name %>">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" id="phone" value="<%= address.phone %>">
+        </div>
+        <div class="form-group">
+          <label>House</label>
+          <input type="text" id="house" value="<%= address.house %>">
+        </div>
+        <div class="form-group">
+          <label>Area</label>
+          <input type="text" id="area" value="<%= address.area %>">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="city" value="<%= address.city %>">
+          </div>
+          <div class="form-group">
+            <label>State</label>
+            <input type="text" id="state" value="<%= address.state %>">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Pincode</label>
+          <input type="text" id="pincode" value="<%= address.pincode %>">
+        </div>
+        <div class="form-actions">
+          <button class="save-btn" onclick="handleUpdate()">Update Address</button>
+          <a href="/user/addresses" class="cancel-btn">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </main>
 </div>
 
-<h3><%= user?.name %></h3>
-<p><%= user?.email %></p>
-</div>
+<%- include('partials/footer') %>
 
-<ul class="menu">
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  function showAlert(message, type = "error") {
+    const box = document.getElementById("alertBox");
+    box.textContent = message;
+    box.style.display = "block";
+    box.style.color = type === "error" ? "red" : "green";
+  }
 
-<li>
-<a href="/user/profile">
-<i class="ri-user-line"></i>
-Personal Information
-</a>
-</li>
+  async function handleUpdate() {
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const house = document.getElementById("house").value.trim();
+    const area = document.getElementById("area").value.trim();
+    const city = document.getElementById("city").value.trim();
+    const state = document.getElementById("state").value.trim();
+    const pincode = document.getElementById("pincode").value.trim();
 
-<li class="active">
-<a href="/user/addresses">
-<i class="ri-map-pin-line"></i>
-Addresses
-</a>
-</li>
+    if (!name || !phone || !house || !city || !state || !pincode) {
+      return showAlert("Please fill all required fields.");
+    }
 
-<li class="logout">
-<a href="/user/logout">
-<i class="ri-logout-box-line"></i>
-Logout
-</a>
-</li>
+    try {
+      const { data } = await axios.post("/user/edit-address/<%= address._id %>", {
+        name, phone, house, area, city, state, pincode
+      });
 
-</ul>
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      } else {
+        showAlert(data.message || "Something went wrong.");
+      }
 
-</aside>
-
-<!-- MAIN CONTENT -->
-<main class="content">
-
-<div class="card">
-
-<h2>Edit Address</h2>
-
-<form action="/user/edit-address/<%= address._id %>" method="POST" class="address-form">
-
-<div class="form-group">
-<label>Full Name</label>
-<input type="text" name="name" value="<%= address.name %>">
-</div>
-
-<div class="form-group">
-<label>Phone</label>
-<input type="text" name="phone" value="<%= address.phone %>">
-</div>
-
-<div class="form-group">
-<label>House</label>
-<input type="text" name="house" value="<%= address.house %>">
-</div>
-
-<div class="form-group">
-<label>Area</label>
-<input type="text" name="area" value="<%= address.area %>">
-</div>
-
-<div class="form-row">
-
-<div class="form-group">
-<label>City</label>
-<input type="text" name="city" value="<%= address.city %>">
-</div>
-
-<div class="form-group">
-<label>State</label>
-<input type="text" name="state" value="<%= address.state %>">
-</div>
-
-</div>
-
-<div class="form-group">
-<label>Pincode</label>
-<input type="text" name="pincode" value="<%= address.pincode %>">
-</div>
-
-<div class="form-actions">
-
-<button type="submit" class="save-btn">Update Address</button>
-
-<a href="/user/addresses" class="cancel-btn">Cancel</a>
-
-</div>
-
-</form>
-
-</div>
-
-</main>
-
-</div>
-
-<%- include('../partials/footer') %>
-
+    } catch (err) {
+      const msg = err.response?.data?.message || "Something went wrong.";
+      showAlert(msg);
+    }
+  }
+</script>
 </body>
 </html>

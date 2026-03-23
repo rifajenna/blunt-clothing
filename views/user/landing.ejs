@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Blunt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root {
+      --bg-color: #0d0d0d;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent: #ffffff;
+      --card-bg: #1a1a1a;
+      --transition: all 0.3s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    /* ─── NAVBAR ─── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 5%;
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+    }
+
+    .brand { font-size: 1.8rem; font-weight: 800; letter-spacing: 2px; color: var(--accent); text-decoration: none; }
+    
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: var(--transition); }
+    .nav-links a:hover { color: var(--text-muted); }
+
+    .btn-login {
+      border: 1px solid var(--accent);
+      padding: 10px 24px;
+      border-radius: 30px;
+    }
+    
+    .btn-login:hover {
+      background: var(--accent);
+      color: var(--bg-color) !important;
+    }
+
+    /* ─── HERO SECTION ─── */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+      background: radial-gradient(circle at center, #1a1a1a 0%, #0d0d0d 100%);
+      position: relative;
+    }
+
+    .hero-bg-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero h1 {
+      font-size: 5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: -1.5px;
+      background: linear-gradient(135deg, #ffffff 0%, #a3a3a3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      z-index: 2;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin-bottom: 40px;
+      z-index: 2;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      z-index: 2;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-color);
+      padding: 16px 36px;
+      border-radius: 40px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: var(--transition);
+      border: 2px solid var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+    }
+
+    /* ─── FEATURED SECTION ─── */
+    .featured {
+      padding: 100px 5%;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 50px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #333;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      transition: var(--transition);
+      border: 1px solid #222;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      border-color: #555;
+      background: #222;
+    }
+
+    .card i {
+      font-size: 3rem;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 3.5rem; }
+      .nav-links a:not(.btn-login) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="brand">BLUNT.</a>
+    <div class="nav-links">
+      <a href="/shop">Shop</a>
+      <a href="/collections">Collections</a>
+      <a href="/about">About</a>
+      <% if (locals.user) { %>
+        <a href="/user/home" class="btn-login"><i class="bi bi-person-circle"></i> Dashboard</a>
+      <% } else { %>
+        <a href="/user/login" class="btn-login">Sign In</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg-glow"></div>
+    <h1>Elevate Your<br>Everyday Style</h1>
+    <p>Discover premium collections tailored for the modern trendsetter. Uncompromising quality meets minimalist aesthetics.</p>
+    <div class="hero-btns">
+      <a href="/shop" class="btn-primary">Explore Collection</a>
+    </div>
+  </section>
+
+  <section class="featured">
+    <h2 class="section-title">New Arrivals</h2>
+    <div class="grid">
+      <!-- Dummy Cards for Layout -->
+      <div class="card">
+        <i class="bi bi-stars"></i>
+        <h3>Premium Basics</h3>
+        <p>Essential pieces crafted from the finest organic materials for everyday comfort.</p>
+      </div>
+      <div class="card">
+        <i class="bi bi-lightning-charge"></i>
+        <h3>Streetwear Active</h3>
+        <p>Dynamic styles designed to keep up with your fast-paced urban lifestyle.</p>
+      </div>
+      <div class="card">
+        <i class="bi bi-snow2"></i>
+        <h3>Winter Outerwear</h3>
+        <p>Stay warm without compromising on fashion with our updated jacket collection.</p>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

@@ -1,0 +1,226 @@
+<style>
+  .page-header { margin-bottom: 22px; display: flex; justify-content: space-between; align-items: center; }
+  .page-header h2 { font-size: 1.35rem; font-weight: 700; color: #111827; }
+  .page-header p  { font-size: 0.875rem; color: #6b7280; margin-top: 2px; }
+
+  .btn-primary { background: #111827; color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.875rem; transition: opacity 0.15s; display: inline-flex; align-items: center; gap: 8px; border: none; }
+  .btn-primary:hover { opacity: 0.85; }
+
+  /* ── Card ── */
+  .categories-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+
+  /* ── Toolbar ── */
+  .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #f3f4f6; }
+  .search-box { position: relative; flex: 1; max-width: 320px; }
+  .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 0.875rem; pointer-events: none; }
+  .search-box input { width: 100%; background: #f9fafb; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: 8px 12px 8px 34px; font-family: 'Inter', sans-serif; font-size: 0.875rem; color: #111827; outline: none; transition: border-color 0.15s; }
+  .search-box input:focus { border-color: #9ca3af; background: #fff; }
+  .search-box input::placeholder { color: #9ca3af; }
+
+  .toolbar-actions { display: flex; align-items: center; gap: 8px; }
+  .btn-search { padding: 8px 16px; background: #111827; color: #fff; border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: opacity 0.15s; }
+  .btn-search:hover { opacity: 0.85; }
+  .btn-clear { padding: 8px 12px; background: #f3f4f6; color: #6b7280; border: 1.5px solid #e5e7eb; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-clear:hover { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  thead { background: #f9fafb; }
+  th { padding: 14px 20px; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.8px; white-space: nowrap; }
+  td { padding: 16px 20px; border-top: 1px solid #f3f4f6; vertical-align: middle; color: #374151; }
+  tr:hover td { background: #fafafa; }
+
+  .name-cell { font-weight: 600; color: #111827; }
+  .desc-cell { color: #6b7280; font-size: 0.82rem; }
+
+  /* Action icons */
+  .action-btns { display: flex; align-items: center; gap: 6px; }
+  .action-btn { width: 32px; height: 32px; border: none; background: transparent; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; color: #6b7280; transition: background 0.12s, color 0.12s; text-decoration: none; }
+  .action-btn:hover { background: #f3f4f6; color: #111827; }
+  .action-btn.del-btn:hover { background: #fef2f2; color: #ef4444; }
+
+  /* Empty State */
+  .empty-state { text-align: center; padding: 52px 24px; color: #9ca3af; }
+  .empty-state i { font-size: 2.2rem; margin-bottom: 10px; display: block; }
+  .empty-state p { font-size: 0.875rem; }
+
+  /* ── Pagination ── */
+  .pagination-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid #f3f4f6; flex-wrap: wrap; gap: 10px; }
+  .page-info { font-size: 0.82rem; color: #6b7280; }
+  .page-btns { display: flex; align-items: center; gap: 4px; }
+  .page-btn { width: 32px; height: 32px; border-radius: 7px; border: 1.5px solid #e5e7eb; background: transparent; color: #374151; font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.12s; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+  .page-btn:hover { border-color: #111827; color: #111827; }
+  .page-btn.active { background: #111827; border-color: #111827; color: #fff; font-weight: 700; }
+  .page-btn.disabled { opacity: 0.3; pointer-events: none; }
+
+  /* Modal & Toast (Reused from existing layout conventions) */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.18s; }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal { background: #fff; border-radius: 14px; padding: 28px; width: 100%; max-width: 370px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); transform: translateY(16px) scale(0.98); transition: transform 0.18s; }
+  .modal-overlay.show .modal { transform: translateY(0) scale(1); }
+  .modal-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 16px; background: #fef2f2; color: #ef4444; }
+  .modal h3 { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 6px; }
+  .modal p { font-size: 0.85rem; color: #6b7280; margin-bottom: 22px; line-height: 1.55; }
+  .modal-actions { display: flex; gap: 10px; }
+  .btn-modal-cancel { flex: 1; padding: 10px; border: 1.5px solid #e5e7eb; border-radius: 8px; background: transparent; color: #374151; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: border-color 0.15s; }
+  .btn-modal-cancel:hover { border-color: #9ca3af; }
+  .btn-modal-confirm { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.875rem; cursor: pointer; transition: opacity 0.15s; color: #fff; background: #ef4444; }
+  .btn-modal-confirm:hover { opacity: 0.85; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; z-index: 9999; transform: translateY(16px); opacity: 0; transition: all 0.22s; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-success { background: #10b981; color: #fff; }
+  .toast-error { background: #ef4444; color: #fff; }
+</style>
+
+<!-- Header -->
+<div class="page-header">
+  <div>
+    <h2>Categories</h2>
+    <p>Manage product categories</p>
+  </div>
+  <a href="/admin/categories/add" class="btn-primary">
+    <i class="bi bi-plus-lg"></i> Add Category
+  </a>
+</div>
+
+<!-- Card -->
+<div class="categories-card">
+
+  <!-- Toolbar Search -->
+  <form class="toolbar" method="GET" action="/admin/categories">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input type="text" name="search" placeholder="Search categories..." value="<%= search %>" autocomplete="off" />
+    </div>
+    <div class="toolbar-actions">
+      <button type="submit" class="btn-search">Search</button>
+      <% if (search) { %>
+        <a href="/admin/categories" class="btn-clear"><i class="bi bi-x"></i> Clear</a>
+      <% } %>
+    </div>
+  </form>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Created Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (categories.length === 0) { %>
+          <tr>
+            <td colspan="4">
+              <div class="empty-state">
+                <i class="bi bi-tags"></i>
+                <p>No categories found<% if (search) { %> for "<strong><%= search %></strong>"<% } %></p>
+              </div>
+            </td>
+          </tr>
+        <% } else { %>
+          <% categories.forEach((category) => { %>
+            <tr>
+              <td>
+                <span class="name-cell"><%= category.name %></span>
+              </td>
+              <td>
+                <span class="desc-cell"><%= category.description || '—' %></span>
+              </td>
+              <td style="color:#6b7280; font-size: 0.82rem;">
+                <%= new Date(category.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) %>
+              </td>
+              <td>
+                <div class="action-btns">
+                  <a href="/admin/categories/edit/<%= category._id %>" class="action-btn" title="Edit">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
+                  <button class="action-btn del-btn" title="Delete" onclick="openDeleteConfirm('<%= category._id %>', '<%= category.name %>')">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+    <div class="pagination-bar">
+      <span class="page-info">
+        Showing <%= (currentPage - 1) * 5 + 1 %> to <%= Math.min(currentPage * 5, (currentPage - 1) * 5 + categories.length) %> entries
+      </span>
+      <div class="page-btns">
+        <a href="/admin/categories?page=<%= currentPage - 1 %>&search=<%= search %>" class="page-btn <%= currentPage === 1 ? 'disabled' : '' %>"><i class="bi bi-chevron-left"></i></a>
+        <% for (let p = 1; p <= totalPages; p++) { %>
+          <a href="/admin/categories?page=<%= p %>&search=<%= search %>" class="page-btn <%= p === currentPage ? 'active' : '' %>"><%= p %></a>
+        <% } %>
+        <a href="/admin/categories?page=<%= currentPage + 1 %>&search=<%= search %>" class="page-btn <%= currentPage === totalPages ? 'disabled' : '' %>"><i class="bi bi-chevron-right"></i></a>
+      </div>
+    </div>
+  <% } %>
+
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+    <h3>Delete Category</h3>
+    <p id="deleteDesc"></p>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeDeleteConfirm()">Cancel</button>
+      <button class="btn-modal-confirm" onclick="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  let deleteId = null;
+
+  function openDeleteConfirm(id, name) {
+    deleteId = id;
+    document.getElementById('deleteDesc').textContent = `Are you sure you want to delete "${name}"? It will be removed from the store operations.`;
+    document.getElementById('deleteModal').classList.add('show');
+  }
+
+  function closeDeleteConfirm() {
+    document.getElementById('deleteModal').classList.remove('show');
+    deleteId = null;
+  }
+
+  async function confirmDelete() {
+    if (!deleteId) return;
+    try {
+      const res = await axios.patch(`/admin/categories/soft-delete/${deleteId}`);
+      closeDeleteConfirm();
+      showToast(res.data.message || 'Category deleted', 'success');
+      setTimeout(() => location.reload(), 900);
+    } catch (err) {
+      closeDeleteConfirm();
+      showToast(err.response?.data?.message || 'Failed to delete category', 'error');
+    }
+  }
+
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast toast-${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteConfirm();
+  });
+</script>

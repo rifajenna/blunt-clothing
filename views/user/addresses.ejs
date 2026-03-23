@@ -1,131 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<title>My Addresses</title>
+  <meta charset="UTF-8">
+  <title>My Addresses</title>
+  <link rel="stylesheet" href="/user/css/layout.css">
+  <link rel="stylesheet" href="/user/css/profile.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    .default-badge {
+      background: #f0fff4;
+      color: #38a169;
+      border: 1px solid #c6f6d5;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
 
-<link rel="stylesheet" href="/user/css/layout.css">
-<link rel="stylesheet" href="/user/css/profile.css">
+    .set-default-btn {
+      background: transparent;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #555;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      font-family: inherit;
+    }
 
-<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    .set-default-btn:hover {
+      border-color: #38a169;
+      color: #38a169;
+    }
+
+    .address-type-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .address-type-row h4 { margin: 0; }
+  </style>
 </head>
-
 <body>
 
-<%- include('../partials/header') %>
+<%- include('partials/header') %>
 
 <div class="profile-container">
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="user-card">
+      <div class="avatar"><i class="ri-user-line"></i></div>
+      <h3><%= user?.name %></h3>
+      <p><%= user?.email %></p>
+    </div>
+    <ul class="menu">
+      <li><a href="/user/profile"><i class="ri-user-line"></i> Personal Information</a></li>
+      <li class="active"><a href="/user/addresses"><i class="ri-map-pin-line"></i> Addresses</a></li>
+      <li><i class="ri-heart-line"></i> Wishlist</li>
+      <li><i class="ri-bank-card-line"></i> Payment Methods</li>
+      <li><i class="ri-shopping-bag-line"></i> Order History</li>
+      <li class="logout"><i class="ri-logout-box-line"></i><a href="/user/logout"> Logout</a></li>
+    </ul>
+  </aside>
 
-<div class="user-card">
-<div class="avatar">
-<i class="ri-user-line"></i>
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="card">
+      <div class="card-header">
+        <h2>Saved Addresses</h2>
+        <a class="add-btn" href="/user/add-address">Add New Address</a>
+      </div>
+
+      <div id="alertBox" class="alert" style="display:none;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:0.85rem;font-weight:500;"></div>
+
+      <% if (addresses.length === 0) { %>
+        <p style="color:#888;font-size:0.9rem;">No addresses saved yet.</p>
+      <% } %>
+
+      <% addresses.forEach(address => { %>
+        <div class="address-card" id="addr-<%= address._id %>">
+          <div class="address-left">
+            <div class="address-type-row">
+              <h4><%= address.type || "Home" %></h4>
+              <% if (address.isDefault) { %>
+                <span class="default-badge">Default</span>
+              <% } %>
+            </div>
+            <p>
+              <%= address.house %>, <%= address.area %><br/>
+              <%= address.city %>, <%= address.state %> - <%= address.pincode %>
+            </p>
+            <p><%= address.phone %></p>
+          </div>
+          <div class="address-right">
+            <% if (!address.isDefault) { %>
+              <button class="set-default-btn" onclick="setDefault('<%= address._id %>')">
+                Set as Default
+              </button>
+            <% } %>
+            <a href="/user/edit-address/<%= address._id %>">Edit</a>
+            <button class="delete-btn" onclick="deleteAddress('<%= address._id %>')">Delete</button>
+          </div>
+        </div>
+      <% }) %>
+
+    </div>
+  </main>
 </div>
 
-<h3><%= user?.name %></h3>
-<p><%= user?.email %></p>
-</div>
+<%- include('partials/footer') %>
 
-<ul class="menu">
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  function showAlert(message, type = "error") {
+    const box = document.getElementById("alertBox");
+    box.textContent = message;
+    box.style.display = "block";
+    box.style.background = type === "error" ? "#fff5f5" : "#f0fff4";
+    box.style.color = type === "error" ? "#e53e3e" : "#38a169";
+    box.style.border = type === "error" ? "1px solid #fed7d7" : "1px solid #c6f6d5";
+    setTimeout(() => { box.style.display = "none"; }, 3000);
+  }
 
-<li class="active">
-<a href="/user/profile">
-<i class="ri-user-line"></i>
-Personal Information
-</a>
-</li>
+  async function setDefault(id) {
+    try {
+      const { data } = await axios.patch(`/user/set-default-address/${id}`);
+      showAlert(data.message || "Default address updated", "success");
+      setTimeout(() => location.reload(), 800);
+    } catch (err) {
+      showAlert(err.response?.data?.message || "Something went wrong");
+    }
+  }
 
-<li>
-<a href="/user/addresses">
-<i class="ri-map-pin-line"></i>
-Addresses
-</a>
-</li>
-
-<li>
-<i class="ri-heart-line"></i>
-Wishlist
-</li>
-
-<li>
-<i class="ri-bank-card-line"></i>
-Payment Methods
-</li>
-
-<li>
-<i class="ri-shopping-bag-line"></i>
-Order History
-</li>
-
-<li class="logout">
-<i class="ri-logout-box-line"></i>
-<a href="/user/logout">Logout</a>
-</li>
-
-</ul>
-
-</aside>
-
-<!-- MAIN CONTENT -->
-
-<main class="content">
-
-<div class="card">
-
-<div class="card-header">
-
-<h2>Saved Addresses</h2>
-
-<a class="add-btn" href="/user/add-address">Add New Address</a>
-
-</div>
-
-<% if(addresses.length === 0){ %>
-
-<p>No addresses saved.</p>
-
-<% } %>
-
-<% addresses.forEach(address => { %>
-
-<div class="address-card">
-
-<div class="address-left">
-
-<h4><%= address.type || "Home" %></h4>
-
-<p>
-<%= address.house %>, <%= address.area %><br>
-<%= address.city %>, <%= address.state %> - <%= address.pincode %>
-</p>
-
-<p><%= address.phone %></p>
-
-</div>
-
-<div class="address-right">
-
-<a href="/user/edit-address/<%= address._id %>">Edit</a>
-
-<a class="delete-btn" href="/user/delete-address/<%= address._id %>">Delete</a>
-
-</div>
-
-</div>
-
-<% }) %>
-
-</div>
-
-</main>
-
-</div>
-
-<%- include('../partials/footer') %>
-
+  async function deleteAddress(id) {
+    if (!confirm("Are you sure you want to delete this address?")) return;
+    try {
+      const { data } = await axios.delete(`/user/delete-address/${id}`);
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      } else {
+        showAlert(data.message || "Something went wrong");
+      }
+    } catch (err) {
+      showAlert(err.response?.data?.message || "Something went wrong");
+    }
+  }
+</script>
 </body>
-
 </html>

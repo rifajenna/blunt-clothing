@@ -18,7 +18,11 @@ const addressSchema = new mongoose.Schema({
     type: String,
     enum: ["Home", "Work"],
     default: "Home"
-  }
+  },
+  isDefault: {
+  type: Boolean,
+  default: false
+}
 });
 
 const Address = mongoose.model("Address", addressSchema);

@@ -6,16 +6,17 @@ import session from "express-session";
 import expressEjsLayouts from "express-ejs-layouts";
 import path from "path";
 import { fileURLToPath } from "url";
-import adminRoutes from "./routes/admin/adminRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import connectDB from "./config/db.js";
 import methodOverride from "method-override";
-// import userRoutes from "./routes/user/userRoutes.js";
-// import { createDefaultAdmin } from "./utils/createAdmin.js";
-import { createPermanentAdmin } from "./controllers/AdminController.js";
+import userRoutes from "./routes/userRoutes.js";
+import { createDefaultAdmin } from "./utils/createAdmin.js";
+import { createPermanentAdmin } from "./controllers/admin/authController.js";
 import { errorHandler } from "./utils/errorHandler.js";
-// import passport, { initPassport } from "./config/passport.js";
+import passport, { initPassport } from "./config/passport.js";
+import MongoStore from "connect-mongo";
 
-// initPassport(); 
+initPassport(); 
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -30,29 +31,33 @@ app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 
 app.use(session({
-  secret: "adminSecret",
+  secret: process.env.SESSION_SECRET || "adminSecret",
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
   resave: false,
   saveUninitialized: true
 }));
 
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
 });
 
-connectDB().then(async () => {
-  // await createDefaultAdmin();
-  await createPermanentAdmin();
-});
+import { showLandingPage } from "./controllers/user/profileController.js";
 
 app.use("/admin", adminRoutes);
-// app.use("/user", userRoutes);
+app.use("/user", userRoutes);
+
+app.get("/", showLandingPage);
 
 app.use(errorHandler);
 
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
-});
+connectDB().then(async () => {
+  await createDefaultAdmin();
+  await createPermanentAdmin();
+  app.listen(3000, () => {
+    console.log("Server running on http://localhost:3000");
+  });
+}).catch(err => console.error(err));

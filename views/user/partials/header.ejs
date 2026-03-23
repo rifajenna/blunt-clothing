@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= locals.title || 'BLUNT' %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="stylesheet" href="/user/css/layout.css"/>
+  <% if (locals.cssFile) { %>
+    <link rel="stylesheet" href="/user/css/<%= cssFile %>"/>
+  <% } %>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">Free shipping on orders above ₹999 &nbsp;|&nbsp; Use code: BLUNT10</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="/user/home" class="nav-logo">BLUNT</a>
+
+  <ul class="nav-links">
+    <li><a href="/user/home">Home</a></li>
+    <li><a href="#">Shop</a></li>
+    <li><a href="#">Collections</a></li>
+    <li><a href="#">About</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <button class="nav-icon-btn"><i class="bi bi-search"></i></button>
+
+    <button class="nav-icon-btn">
+      <i class="bi bi-bag"></i>
+      <span class="nav-cart-count">0</span>
+    </button>
+
+    <a href="/user/profile" class="nav-icon-btn">
+      <i class="bi bi-person"></i>
+    </a>
+  </div>
+</nav>
+
+<main>

@@ -1,154 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<title>Add Address</title>
-
-<link rel="stylesheet" href="/user/css/layout.css">
-<link rel="stylesheet" href="/user/css/profile.css">
-
-<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Add Address</title>
+  <link rel="stylesheet" href="/user/css/layout.css">
+  <link rel="stylesheet" href="/user/css/profile.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
-
 <body>
 
-<%- include('../partials/header') %>
+<%- include('partials/header') %>
 
 <div class="profile-container">
+  <aside class="sidebar">
+    <div class="user-card">
+      <div class="avatar"><i class="ri-user-line"></i></div>
+      <h3><%= user?.name %></h3>
+      <p><%= user?.email %></p>
+    </div>
+    <ul class="menu">
+      <li><a href="/user/profile"><i class="ri-user-line"></i> Personal Information</a></li>
+      <li class="active"><a href="/user/addresses"><i class="ri-map-pin-line"></i> Addresses</a></li>
+      <li><i class="ri-heart-line"></i> Wishlist</li>
+      <li><i class="ri-bank-card-line"></i> Payment Methods</li>
+      <li><i class="ri-shopping-bag-line"></i> Order History</li>
+      <li class="logout"><a href="/user/logout"><i class="ri-logout-box-line"></i> Logout</a></li>
+    </ul>
+  </aside>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
+  <main class="content">
+    <div class="card">
+      <h2>Add New Address</h2>
 
-<div class="user-card">
-<div class="avatar">
-<i class="ri-user-line"></i>
+      <div id="alertBox" class="alert" style="display:none;"></div>
+
+      <div class="address-form">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="name" placeholder="Enter your full name" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number *</label>
+          <input type="text" id="phone" placeholder="Enter your phone number" required>
+        </div>
+        <div class="form-group">
+          <label>Address Line 1 *</label>
+          <input type="text" id="house" placeholder="Street address, P.O box">
+        </div>
+        <div class="form-group">
+          <label>Address Line 2</label>
+          <input type="text" id="area" placeholder="Apartment, suite, building">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City *</label>
+            <input type="text" id="city" placeholder="City">
+          </div>
+          <div class="form-group">
+            <label>State *</label>
+            <input type="text" id="state" placeholder="State">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>ZIP Code *</label>
+            <input type="text" id="pincode" placeholder="ZIP Code">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select id="type">
+              <option value="Home">Home</option>
+              <option value="Work">Work</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="save-btn" onclick="handleAddAddress()">Save Address</button>
+          <a href="/user/addresses" class="cancel-btn">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </main>
 </div>
 
-<h3><%= user?.name %></h3>
-<p><%= user?.email %></p>
-</div>
+<%- include('partials/footer') %>
 
-<ul class="menu">
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  function showAlert(message, type = "error") {
+    const box = document.getElementById("alertBox");
+    box.textContent = message;
+    box.style.display = "block";
+    box.style.color = type === "error" ? "red" : "green";
+  }
 
-<li>
-<a href="/user/profile">
-<i class="ri-user-line"></i>
-Personal Information
-</a>
-</li>
+  async function handleAddAddress() {
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const house = document.getElementById("house").value.trim();
+    const area = document.getElementById("area").value.trim();
+    const city = document.getElementById("city").value.trim();
+    const state = document.getElementById("state").value.trim();
+    const pincode = document.getElementById("pincode").value.trim();
+    const type = document.getElementById("type").value;
 
-<li class="active">
-<a href="/user/addresses">
-<i class="ri-map-pin-line"></i>
-Addresses
-</a>
-</li>
+    if (!name || !phone || !house || !city || !state || !pincode) {
+      return showAlert("Please fill all required fields.");
+    }
 
-<li>
-<i class="ri-heart-line"></i>
-Wishlist
-</li>
+    try {
+      const { data } = await axios.post("/user/add-address", {
+        name, phone, house, area, city, state, pincode, type
+      });
 
-<li>
-<i class="ri-bank-card-line"></i>
-Payment Methods
-</li>
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      } else {
+        showAlert(data.message || "Something went wrong.");
+      }
 
-<li>
-<i class="ri-shopping-bag-line"></i>
-Order History
-</li>
-
-<li class="logout">
-<a href="/user/logout">
-<i class="ri-logout-box-line"></i>
-Logout
-</a>
-</li>
-
-</ul>
-
-</aside>
-
-
-<!-- MAIN CONTENT -->
-<main class="content">
-
-<div class="card">
-
-<h2>Add New Address</h2>
-
-<form action="/user/add-address" method="POST" class="address-form">
-
-<div class="form-group">
-<label>Full Name *</label>
-<input type="text" name="name" placeholder="Enter your full name" required>
-</div>
-
-<div class="form-group">
-<label>Phone Number *</label>
-<input type="text" name="phone" placeholder="Enter your phone number" required>
-</div>
-
-<div class="form-group">
-<label>Address Line 1 *</label>
-<input type="text" name="house" placeholder="Street address, P.O box">
-</div>
-
-<div class="form-group">
-<label>Address Line 2</label>
-<input type="text" name="area" placeholder="Apartment, suite, building">
-</div>
-
-<div class="form-row">
-
-<div class="form-group">
-<label>City *</label>
-<input type="text" name="city" placeholder="City">
-</div>
-
-<div class="form-group">
-<label>State *</label>
-<input type="text" name="state" placeholder="State">
-</div>
-
-</div>
-
-<div class="form-row">
-
-<div class="form-group">
-<label>ZIP Code *</label>
-<input type="text" name="pincode" placeholder="ZIP Code">
-</div>
-
-<div class="form-group">
-<label>Type</label>
-<select name="type">
-<option value="Home">Home</option>
-<option value="Work">Work</option>
-</select>
-</div>
-
-</div>
-
-<div class="form-actions">
-
-<button type="submit" class="save-btn">Save Address</button>
-
-<a href="/user/addresses" class="cancel-btn">Cancel</a>
-
-</div>
-
-</form>
-
-</div>
-
-</main>
-
-</div>
-
-<%- include('../partials/footer') %>
-
+    } catch (err) {
+      const msg = err.response?.data?.message || "Something went wrong.";
+      showAlert(msg);
+    }
+  }
+</script>
 </body>
 </html>

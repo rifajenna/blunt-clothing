@@ -290,7 +290,9 @@
       <div class="nav-section-label">Store</div>
 
       <span class="nav-link dummy"><i class="bi bi-box-seam-fill"></i> Products</span>
-      <span class="nav-link dummy"><i class="bi bi-tag-fill"></i> Categories</span>
+      <a href="/admin/categories" class="nav-link <%= locals.title === 'Categories' ? 'active' : '' %>">
+        <i class="bi bi-tag-fill"></i> Categories
+      </a>
       <span class="nav-link dummy"><i class="bi bi-percent"></i> Offers</span>
 
       <div class="nav-section-label">Operations</div>
