@@ -1,14 +1,52 @@
 import User from "../../models/User.js";
+import Product from "../../models/Product.js";
+import Category from "../../models/Category.js";
 import bcrypt from "bcryptjs";
 import { sendResponse } from "../../utils/sendResponse.js";
 
-export const showLandingPage = (req, res) => {
-  res.render("user/landing", { layout: false, user: req.session.user });
+export const showLandingPage = async (req, res) => {
+  try {
+    const categories = await Category.find({ isDeleted: false }).limit(3);
+    const featuredProducts = await Product.find({ isDeleted: false })
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .populate('category');
+
+    res.render("user/landing", { 
+      layout: false, 
+      user: req.session.user,
+      categories,
+      featuredProducts
+    });
+  } catch (err) {
+    console.error("Landing page error:", err);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
 export const showHome = async (req, res) => {
-  const user = await User.findById(req.session.user);
-  res.render("user/home", { layout: false, user });
+  try {
+    const user = await User.findById(req.session.user);
+    
+    // Fetch active categories (limit to 3 for the home page grid)
+    const categories = await Category.find({ isDeleted: false }).limit(3);
+    
+    // Fetch latest 4-6 products as "Featured"
+    const featuredProducts = await Product.find({ isDeleted: false })
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .populate('category');
+
+    res.render("user/home", { 
+      layout: false, 
+      user, 
+      categories, 
+      featuredProducts 
+    });
+  } catch (err) {
+    console.error("Home page error:", err);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
 export const showProfile = async (req, res) => {

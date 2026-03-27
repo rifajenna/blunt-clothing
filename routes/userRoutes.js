@@ -15,13 +15,32 @@ import {
   getAddresses, showAddAddress, addAddress, deleteAddress,
   showEditAddress, updateAddress, setDefaultAddress
 } from "../controllers/user/addressController.js";
+import { getShopPage, getProductDetails } from "../controllers/user/shopController.js";
+import { 
+  getCart, addToCart, removeFromCart, updateCartQuantity,
+  getWishlist, toggleWishlist 
+} from "../controllers/user/cartController.js";
 import { userLayout } from "../middlewares/layoutMiddleware.js";
 
 const router = express.Router();
 
 router.use(userLayout);
 
-// ─── GOOGLE AUTH ──────────────────────────────────────────────────────────────
+// Shop & Product Details
+router.get("/shop", wrapAsync(getShopPage));
+router.get("/shop/product/:id", wrapAsync(getProductDetails));
+
+// Cart
+router.get("/cart", isUserLoggedIn, wrapAsync(getCart));
+router.post("/cart/add", isUserLoggedIn, wrapAsync(addToCart));
+router.patch("/cart/update", isUserLoggedIn, wrapAsync(updateCartQuantity));
+router.delete("/cart/remove", isUserLoggedIn, wrapAsync(removeFromCart));
+
+// Wishlist
+router.get("/wishlist", isUserLoggedIn, wrapAsync(getWishlist));
+router.post("/wishlist/toggle", isUserLoggedIn, wrapAsync(toggleWishlist));
+
+// Google Auth
 router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 router.get("/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/user/login" }),
@@ -31,7 +50,7 @@ router.get("/auth/google/callback",
   }
 );
 
-// ─── SIGNUP + SIGNUP OTP ──────────────────────────────────────────────────────
+// Signup & OTP
 router.get("/signup", showSignup);
 router.post("/signup", wrapAsync(signupUser));
 
@@ -39,12 +58,12 @@ router.get("/verify-otp", showVerifyOtp);             // ✅ only one GET handle
 router.post("/verify-otp", wrapAsync(verifyOtp));
 router.post("/resend-otp", wrapAsync(resendOtp));
 
-// ─── LOGIN / LOGOUT ───────────────────────────────────────────────────────────
+// Login / Logout
 router.get("/login", showLogin);
 router.post("/login", wrapAsync(loginUser));
 router.get("/logout", logoutUser);
 
-// ─── FORGOT PASSWORD → RESET OTP → RESET PASSWORD ────────────────────────────
+// Forgot Password
 router.get("/forgot-password", showForgotPassword);
 router.post("/forgot-password", wrapAsync(sendResetOtp));
 
@@ -55,19 +74,19 @@ router.post("/resend-reset-otp", wrapAsync(resendResetOtp));
 router.get("/reset-password", showResetPassword);
 router.post("/reset-password", wrapAsync(resetPassword));
 
-// ─── HOME / PROFILE ───────────────────────────────────────────────────────────
+// Home & Profile
 router.get("/home", isUserLoggedIn, showHome);
 router.get("/profile", isUserLoggedIn, showProfile);
 
 router.get("/edit-profile", isUserLoggedIn, showEditProfile);
 router.post("/edit-profile", isUserLoggedIn, wrapAsync(updateProfile));
 
-// ─── CHANGE PASSWORD ──────────────────────────────────────────────────────────
+// Change Password
 router.get("/change-password", isUserLoggedIn, showChangePassword);
 router.post("/change-password", isUserLoggedIn, wrapAsync(changePassword));
 router.get("/new-password", isUserLoggedIn, showNewPassword);
 
-// ─── ADDRESSES ────────────────────────────────────────────────────────────────
+// Addresses
 router.get("/addresses", isUserLoggedIn, wrapAsync(getAddresses));
 router.get("/add-address", isUserLoggedIn, showAddAddress);
 router.post("/add-address", isUserLoggedIn, wrapAsync(addAddress));

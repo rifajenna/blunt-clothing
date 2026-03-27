@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Wishlist | BLUNT</title>
+  <link rel="stylesheet" href="/user/css/layout.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    .wishlist-container { max-width: 1400px; margin: 40px auto; padding: 0 20px; }
+    .wishlist-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 30px; text-align: center; }
+    
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 32px; }
+    .product-card { position: relative; transition: transform 0.2s; }
+    .product-card:hover { transform: translateY(-4px); }
+    
+    .product-image-wrap { position: relative; width: 100%; aspect-ratio: 4/5; background: #f3f4f6; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+    .product-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .btn-remove-wishlist { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; background: #ffffff; border: none; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #ef4444; cursor: pointer; z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    
+    .product-info { display: flex; flex-direction: column; gap: 4px; }
+    .product-name { font-size: 0.9rem; font-weight: 700; color: #111827; }
+    .product-price { font-size: 1rem; font-weight: 800; color: #111827; margin-top: 8px; }
+    
+    .btn-add-cart { width: 100%; padding: 12px; background: #111827; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 0.85rem; margin-top: 16px; cursor: pointer; transition: opacity 0.15s; }
+    .btn-add-cart:hover { opacity: 0.9; }
+    .btn-add-cart:disabled { background: #d1d5db; cursor: not-allowed; }
+
+    .empty-wishlist { text-align: center; padding: 100px 20px; grid-column: 1 / -1; }
+    .empty-wishlist i { font-size: 4rem; color: #d1d5db; margin-bottom: 20px; display: block; }
+  </style>
+</head>
+<body>
+
+<%- include('partials/header') %>
+
+<div class="wishlist-container">
+  <h1 class="wishlist-title">Your Wishlist</h1>
+  
+  <div class="product-grid">
+    <% if (wishlist.products.length === 0) { %>
+      <div class="empty-wishlist">
+        <i class="ri-heart-line"></i>
+        <h3>Your wishlist is empty</h3>
+        <p>Save your favorite items here to keep an eye on them.</p>
+        <a href="/user/shop" style="display: inline-block; margin-top: 20px; padding: 12px 30px; background: #111827; color: #fff; border-radius: 8px; font-weight: 600;">Explore Shop</a>
+      </div>
+    <% } else { %>
+      <% wishlist.products.forEach(product => { %>
+        <div class="product-card" id="card-<%= product._id %>">
+          <div class="product-image-wrap">
+            <button type="button" class="btn-remove-wishlist" onclick="toggleWishlist('<%= product._id %>')">
+              <i class="ri-close-line"></i>
+            </button>
+            <a href="/user/shop/product/<%= product._id %>">
+              <img src="<%= product.images[0] %>" alt="<%= product.name %>">
+            </a>
+          </div>
+          <div class="product-info">
+            <a href="/user/shop/product/<%= product._id %>">
+              <div class="product-name"><%= product.name %></div>
+            </a>
+            <div class="product-price">₹<%= product.price.toLocaleString('en-IN') %></div>
+            
+            <% if (product.stock > 0) { %>
+              <button class="btn-add-cart" onclick="addToCart('<%= product._id %>')">Add to Cart</button>
+            <% } else { %>
+              <button class="btn-add-cart" disabled>Out of Stock</button>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  async function toggleWishlist(productId) {
+    try {
+      const response = await fetch('/user/wishlist/toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId })
+      });
+      const data = await response.json();
+      if (data.success) {
+        document.getElementById(`card-${productId}`).remove();
+        if (document.querySelectorAll('.product-card').length === 0) {
+            location.reload();
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function addToCart(productId) {
+    try {
+      const response = await fetch('/user/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, quantity: 1 })
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Added to cart',
+          text: data.message,
+          showCancelButton: true,
+          confirmButtonColor: '#111827',
+          cancelButtonColor: '#6b7280',
+          confirmButtonText: 'View Cart',
+          cancelButtonText: 'Continue Shopping'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/user/cart';
+          } else {
+            location.reload(); // To update wishlist if removed
+          }
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: data.message
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -20,7 +20,7 @@ export const getUsers = async (req, res) => {
   res.render("admin/pages/users", {
     title: "Users",
     showLayout: true,
-    cssFile: "dashboard.css",
+    cssFile: "users.css",
     users,
     totalPages: Math.ceil(totalUsers / limit),
     currentPage: page,

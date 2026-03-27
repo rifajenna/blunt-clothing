@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart | BLUNT</title>
+  <link rel="stylesheet" href="/user/css/layout.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    .cart-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: flex; gap: 40px; }
+    .cart-items { flex: 2; }
+    .cart-summary { flex: 1; background: #f9fafb; padding: 30px; border-radius: 12px; height: fit-content; position: sticky; top: 100px; }
+    
+    .cart-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 30px; }
+    
+    .cart-table { width: 100%; border-collapse: collapse; }
+    .cart-table th { text-align: left; padding-bottom: 20px; border-bottom: 1px solid #f3f4f6; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; }
+    .cart-table td { padding: 24px 0; border-bottom: 1px solid #f3f4f6; }
+    
+    .item-info { display: flex; gap: 20px; align-items: center; }
+    .item-img { width: 80px; aspect-ratio: 4/5; object-fit: cover; border-radius: 8px; background: #f3f4f6; }
+    .item-details h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .item-details p { font-size: 0.8rem; color: #6b7280; }
+    
+    .qty-selector { display: flex; border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden; width: fit-content; }
+    .qty-btn { width: 32px; height: 32px; background: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: background 0.15s; }
+    .qty-btn:hover { background: #f3f4f6; }
+    .qty-input { width: 40px; border: none; text-align: center; border-left: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; font-size: 0.9rem; font-weight: 600; }
+    
+    .price-col { font-weight: 700; font-size: 0.95rem; }
+    .remove-btn { color: #ef4444; background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 5px; transition: opacity 0.15s; }
+    .remove-btn:hover { opacity: 0.7; }
+    
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 0.9rem; }
+    .summary-total { border-top: 1px solid #e5e7eb; margin-top: 20px; padding-top: 20px; font-weight: 800; font-size: 1.1rem; }
+    
+    .checkout-btn { width: 100%; padding: 16px; background: #111827; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; margin-top: 30px; cursor: pointer; transition: opacity 0.15s; }
+    .checkout-btn:hover { opacity: 0.9; }
+    .checkout-btn:disabled { background: #d1d5db; cursor: not-allowed; }
+
+    .empty-cart { text-align: center; padding: 100px 20px; }
+    .empty-cart i { font-size: 4rem; color: #d1d5db; margin-bottom: 20px; display: block; }
+    .shop-now-btn { display: inline-block; margin-top: 20px; padding: 12px 30px; background: #111827; color: #fff; border-radius: 8px; font-weight: 600; }
+
+    @media (max-width: 900px) {
+      .cart-container { flex-direction: column; }
+      .cart-summary { position: static; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<%- include('partials/header') %>
+
+<div class="cart-container">
+  <div class="cart-items">
+    <h1 class="cart-title">Your Cart</h1>
+    
+    <% if (cart.items.length === 0) { %>
+      <div class="empty-cart">
+        <i class="ri-shopping-bag-line"></i>
+        <h3>Your cart is empty</h3>
+        <p>Looks like you haven't added anything to your cart yet.</p>
+        <a href="/user/shop" class="shop-now-btn">Start Shopping</a>
+      </div>
+    <% } else { %>
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% cart.items.forEach(item => { %>
+            <tr id="row-<%= item.productId._id %>">
+              <td>
+                <div class="item-info">
+                  <img src="<%= item.productId.images[0] %>" alt="" class="item-img">
+                  <div class="item-details">
+                    <h4><%= item.productId.name %></h4>
+                    <p>₹<%= item.productId.price.toLocaleString('en-IN') %></p>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="qty-selector">
+                  <button class="qty-btn" onclick="updateQuantity('<%= item.productId._id %>', -1)">-</button>
+                  <input type="text" class="qty-input" id="qty-<%= item.productId._id %>" value="<%= item.quantity %>" readonly>
+                  <button class="qty-btn" onclick="updateQuantity('<%= item.productId._id %>', 1)">+</button>
+                </div>
+              </td>
+              <td class="price-col" id="total-<%= item.productId._id %>">
+                ₹<%= item.totalPrice.toLocaleString('en-IN') %>
+              </td>
+              <td>
+                <button class="remove-btn" onclick="removeItem('<%= item.productId._id %>')">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <% if (cart.items.length > 0) { %>
+    <div class="cart-summary">
+      <h3 style="margin-bottom: 24px;">Order Summary</h3>
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="subtotal-display">₹<%= subtotal.toLocaleString('en-IN') %></span>
+      </div>
+      <div class="summary-row">
+        <span>Shipping</span>
+        <span style="color: #10b981;">FREE</span>
+      </div>
+      <div class="summary-row summary-total">
+        <span>Total</span>
+        <span id="total-display">₹<%= subtotal.toLocaleString('en-IN') %></span>
+      </div>
+      
+      <button class="checkout-btn" id="checkoutBtn" onclick="location.href='/user/checkout'">Proceed to Checkout</button>
+      <p style="font-size: 0.7rem; color: #9ca3af; margin-top: 16px; text-align: center;">
+        Taxes and shipping calculated at checkout
+      </p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  async function updateQuantity(productId, change) {
+    try {
+      const response = await fetch('/user/cart/update', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, change })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        document.getElementById(`qty-${productId}`).value = data.newQuantity;
+        document.getElementById(`total-${productId}`).innerText = `₹${data.itemTotal.toLocaleString('en-IN')}`;
+        document.getElementById('subtotal-display').innerText = `₹${data.subtotal.toLocaleString('en-IN')}`;
+        document.getElementById('total-display').innerText = `₹${data.subtotal.toLocaleString('en-IN')}`;
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: data.message,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function removeItem(productId) {
+    const result = await Swal.fire({
+      title: 'Remove item?',
+      text: "Are you sure you want to remove this product from your cart?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#111827',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, remove it'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch('/user/cart/remove', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          location.reload();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+</script>
+
+</body>
+</html>

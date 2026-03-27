@@ -23,6 +23,15 @@ import {
   editCategory,
   softDeleteCategory
 } from "../controllers/admin/categoryController.js";
+import {
+  getProducts,
+  showAddProduct,
+  addProduct,
+  showEditProduct,
+  editProduct,
+  softDeleteProduct
+} from "../controllers/admin/productController.js";
+import { uploadProductImage } from "../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
@@ -53,5 +62,23 @@ router.post("/categories/add", isAdminLoggedIn, wrapAsync(addCategory));
 router.get("/categories/edit/:id", isAdminLoggedIn, wrapAsync(showEditCategory));
 router.post("/categories/edit/:id", isAdminLoggedIn, wrapAsync(editCategory));
 router.patch("/categories/soft-delete/:id", isAdminLoggedIn, wrapAsync(softDeleteCategory));
+
+// Product routes
+router.get("/products", isAdminLoggedIn, wrapAsync(getProducts));
+router.get("/products/add", isAdminLoggedIn, wrapAsync(showAddProduct));
+router.post(
+  "/products/add",
+  isAdminLoggedIn,
+  uploadProductImage.array("images", 10),
+  wrapAsync(addProduct)
+);
+router.get("/products/edit/:id", isAdminLoggedIn, wrapAsync(showEditProduct));
+router.post(
+  "/products/edit/:id",
+  isAdminLoggedIn,
+  uploadProductImage.array("images", 10),
+  wrapAsync(editProduct)
+);
+router.patch("/products/soft-delete/:id", isAdminLoggedIn, wrapAsync(softDeleteProduct));
 
 export default router;

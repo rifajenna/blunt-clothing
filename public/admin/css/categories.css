@@ -1,0 +1,21 @@
+.categories-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+.name-cell { font-weight: 600; color: #111827; }
+.desc-cell { color: #6b7280; font-size: 0.82rem; }
+
+/* Empty State */
+.empty-state { text-align: center; padding: 52px 24px; color: #9ca3af; }
+.empty-state i { font-size: 2.2rem; margin-bottom: 10px; display: block; }
+.empty-state p { font-size: 0.875rem; }
+
+/* Action icons */
+.action-btns { display: flex; align-items: center; gap: 6px; }
+.action-btn { width: 32px; height: 32px; border: none; background: transparent; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; color: #6b7280; transition: background 0.12s, color 0.12s; text-decoration: none; }
+.action-btn:hover { background: #f3f4f6; color: #111827; }
+.action-btn.del-btn:hover { background: #fef2f2; color: #ef4444; }
+
+.modal-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 16px; background: #fef2f2; color: #ef4444; }
+
+.btn-modal-cancel { flex: 1; padding: 10px; border: 1.5px solid #e5e7eb; border-radius: 8px; background: transparent; color: #374151; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: border-color 0.15s; }
+.btn-modal-cancel:hover { border-color: #9ca3af; }
+.btn-modal-confirm { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.875rem; cursor: pointer; transition: opacity 0.15s; color: #fff; background: #ef4444; }
+.btn-modal-confirm:hover { opacity: 0.85; }

@@ -1,0 +1,175 @@
+
+<!-- Header -->
+<div class="page-header">
+  <div>
+    <h2>Products</h2>
+    <p>Manage store products and inventory</p>
+  </div>
+  <a href="/admin/products/add" class="btn-primary">
+    <i class="bi bi-plus-lg"></i> Add Product
+  </a>
+</div>
+
+<!-- Card -->
+<div class="products-card">
+
+  <!-- Toolbar Search -->
+  <form class="toolbar" method="GET" action="/admin/products">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input type="text" name="search" placeholder="Search products..." value="<%= search %>" autocomplete="off" />
+    </div>
+    <div class="toolbar-actions">
+      <button type="submit" class="btn-search">Search</button>
+      <% if (search) { %>
+        <a href="/admin/products" class="btn-clear"><i class="bi bi-x"></i> Clear</a>
+      <% } %>
+    </div>
+  </form>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Product Info</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Created Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (products.length === 0) { %>
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <i class="bi bi-box-seam"></i>
+                <p>No products found<% if (search) { %> for "<strong><%= search %></strong>"<% } %></p>
+              </div>
+            </td>
+          </tr>
+        <% } else { %>
+          <% products.forEach((product) => { %>
+            <tr>
+              <td>
+                <div class="name-cell">
+                  <% if (product.images && product.images.length > 0) { %>
+                    <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="product-thumb">
+                  <% } else { %>
+                    <div class="product-thumb" style="display: flex; align-items: center; justify-content: center; color: #9ca3af;"><i class="bi bi-image"></i></div>
+                  <% } %>
+                  <div>
+                    <div style="font-weight: 600;"><%= product.name %></div>
+                    <div class="desc-cell" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      <%= product.description || '—' %>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="desc-cell"><%= product.category ? product.category.name : '—' %></span>
+              </td>
+              <td style="font-weight: 500;">$<%= product.price.toFixed(2) %></td>
+              <td>
+                <% if (product.stock > 10) { %>
+                  <span style="color: #10b981; font-weight: 600;"><%= product.stock %> in stock</span>
+                <% } else if (product.stock > 0) { %>
+                  <span style="color: #f59e0b; font-weight: 600;">Low: <%= product.stock %> left</span>
+                <% } else { %>
+                  <span style="color: #ef4444; font-weight: 600;">Out of Stock</span>
+                <% } %>
+              </td>
+              <td style="color:#6b7280; font-size: 0.82rem;">
+                <%= new Date(product.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) %>
+              </td>
+              <td>
+                <div class="action-btns">
+                  <a href="/admin/products/edit/<%= product._id %>" class="action-btn" title="Edit">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
+                  <button class="action-btn del-btn" title="Delete" onclick="openDeleteConfirm('<%= product._id %>', '<%= product.name.replace(/'/g, "\\'") %>')">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+    <div class="pagination-bar">
+      <span class="page-info">
+        Showing <%= (currentPage - 1) * 5 + 1 %> to <%= Math.min(currentPage * 5, (currentPage - 1) * 5 + products.length) %> entries
+      </span>
+      <div class="page-btns">
+        <a href="/admin/products?page=<%= currentPage - 1 %>&search=<%= search %>" class="page-btn <%= currentPage === 1 ? 'disabled' : '' %>"><i class="bi bi-chevron-left"></i></a>
+        <% for (let p = 1; p <= totalPages; p++) { %>
+          <a href="/admin/products?page=<%= p %>&search=<%= search %>" class="page-btn <%= p === currentPage ? 'active' : '' %>"><%= p %></a>
+        <% } %>
+        <a href="/admin/products?page=<%= currentPage + 1 %>&search=<%= search %>" class="page-btn <%= currentPage === totalPages ? 'disabled' : '' %>"><i class="bi bi-chevron-right"></i></a>
+      </div>
+    </div>
+  <% } %>
+
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+    <h3>Delete Product</h3>
+    <p id="deleteDesc"></p>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeDeleteConfirm()">Cancel</button>
+      <button class="btn-modal-confirm" onclick="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  let deleteId = null;
+
+  function openDeleteConfirm(id, name) {
+    deleteId = id;
+    document.getElementById('deleteDesc').textContent = `Are you sure you want to delete "${name}"? It will not be visible to customers anymore.`;
+    document.getElementById('deleteModal').classList.add('show');
+  }
+
+  function closeDeleteConfirm() {
+    document.getElementById('deleteModal').classList.remove('show');
+    deleteId = null;
+  }
+
+  async function confirmDelete() {
+    if (!deleteId) return;
+    try {
+      const res = await axios.patch(`/admin/products/soft-delete/${deleteId}`);
+      closeDeleteConfirm();
+      showToast(res.data.message || 'Product deleted', 'success');
+      setTimeout(() => location.reload(), 900);
+    } catch (err) {
+      closeDeleteConfirm();
+      showToast(err.response?.data?.message || 'Failed to delete product', 'error');
+    }
+  }
+
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast toast-${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteConfirm();
+  });
+</script>

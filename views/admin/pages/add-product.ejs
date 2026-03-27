@@ -1,0 +1,248 @@
+<!-- Cropper.js CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+<!-- Cropper.js JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+
+<div class="page-header">
+  <h2>Add Product</h2>
+  <p>Create a new product with multiple images</p>
+</div>
+
+<div class="form-card">
+  <form id="addProductForm">
+    <div class="form-grid">
+      <div class="form-group full-width">
+        <label for="name">Product Name <span style="color:#ef4444">*</span></label>
+        <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Vintage Leather Jacket">
+        <div class="error-msg" id="nameError"></div>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="description">Description <span style="color:#ef4444">*</span></label>
+        <textarea id="description" name="description" class="form-control" placeholder="Detailed description of the product..."></textarea>
+        <div class="error-msg" id="descError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category <span style="color:#ef4444">*</span></label>
+        <select id="category" name="category" class="form-control">
+          <option value="">Select a category</option>
+          <% categories.forEach(cat => { %>
+            <option value="<%= cat._id %>"><%= cat.name %></option>
+          <% }) %>
+        </select>
+        <div class="error-msg" id="catError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="price">Price ($) <span style="color:#ef4444">*</span></label>
+        <input type="number" id="price" name="price" class="form-control" placeholder="0.00" step="0.01" min="0">
+        <div class="error-msg" id="priceError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="stock">Stock Quantity <span style="color:#ef4444">*</span></label>
+        <input type="number" id="stock" name="stock" class="form-control" placeholder="0" min="0">
+        <div class="error-msg" id="stockError"></div>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Product Images <span style="color:#ef4444">*</span></label>
+        <div class="upload-area">
+          <input type="file" id="imageInput" accept="image/*" multiple>
+          <div class="upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+          <div class="upload-text">Click or drag images to upload</div>
+          <div class="upload-hint">Upload at least 3 images. They will be cropped to 1:1 aspect ratio.</div>
+        </div>
+        <div class="error-msg" id="imageError"></div>
+        <div class="preview-container" id="previewContainer"></div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-submit" id="submitBtn">Add Product</button>
+      <a href="/admin/products" class="btn-cancel">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<!-- Cropper Modal -->
+<div class="cropper-modal" id="cropperModal">
+  <div class="cropper-content">
+    <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 1.1rem;">Crop Image</h3>
+    <div class="cropper-wrapper">
+      <img id="cropperImage" src="" style="max-width: 100%;">
+    </div>
+    <div class="cropper-actions">
+      <button type="button" class="btn-cancel" onclick="cancelCrop()" style="padding: 8px 16px;">Cancel</button>
+      <button type="button" class="btn-crop" id="cropBtn">Crop & Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // State
+  let croppedFiles = []; // Array of { blob, url }
+  let currentFile = null;
+  let cropper = null;
+  
+  // Elements
+  const imageInput = document.getElementById('imageInput');
+  const previewContainer = document.getElementById('previewContainer');
+  const cropperModal = document.getElementById('cropperModal');
+  const cropperImage = document.getElementById('cropperImage');
+  const addProductForm = document.getElementById('addProductForm');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  // Pending files queue for multiple uploads
+  let fileQueue = [];
+  let isCropping = false;
+
+  // Handle File Selection
+  imageInput.addEventListener('change', function(e) {
+    if (this.files && this.files.length > 0) {
+      // Add files to queue
+      for (let i = 0; i < this.files.length; i++) {
+        fileQueue.push(this.files[i]);
+      }
+      processQueue();
+    }
+    this.value = ''; // Reset input so same file can be selected again if needed
+  });
+
+  function processQueue() {
+    if (isCropping || fileQueue.length === 0) return;
+    
+    isCropping = true;
+    currentFile = fileQueue.shift();
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      cropperImage.src = e.target.result;
+      cropperModal.classList.add('show');
+      
+      if (cropper) {
+        cropper.destroy();
+      }
+      
+      cropper = new Cropper(cropperImage, {
+        aspectRatio: 1, // Square images
+        viewMode: 1,
+        background: false,
+        autoCropArea: 1
+      });
+    };
+    reader.readAsDataURL(currentFile);
+  }
+
+  // Handle Crop actions
+  document.getElementById('cropBtn').addEventListener('click', function() {
+    if (!cropper) return;
+    
+    // Get cropped canvas
+    const canvas = cropper.getCroppedCanvas({
+      width: 800,
+      height: 800
+    });
+    
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const uniqueName = Date.now() + '-' + currentFile.name;
+      const finalFile = new File([blob], uniqueName, { type: 'image/jpeg' });
+      
+      croppedFiles.push({ file: finalFile, url: url });
+      renderPreviews();
+      
+      closeCropper();
+    }, 'image/jpeg', 0.9);
+  });
+
+  function cancelCrop() {
+    closeCropper();
+  }
+
+  function closeCropper() {
+    cropperModal.classList.remove('show');
+    if (cropper) cropper.destroy();
+    cropper = null;
+    isCropping = false;
+    processQueue(); // Process next file if any
+  }
+
+  function renderPreviews() {
+    previewContainer.innerHTML = '';
+    croppedFiles.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'preview-item';
+      div.innerHTML = `
+        <img src="${item.url}" alt="Preview">
+        <button type="button" class="remove-btn" onclick="removeImage(${index})">&times;</button>
+      `;
+      previewContainer.appendChild(div);
+    });
+  }
+
+  window.removeImage = function(index) {
+    URL.revokeObjectURL(croppedFiles[index].url);
+    croppedFiles.splice(index, 1);
+    renderPreviews();
+  };
+
+  // Form Submission
+  addProductForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Reset errors
+    document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+    
+    const name = document.getElementById('name').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const category = document.getElementById('category').value;
+    const price = document.getElementById('price').value;
+    const stock = document.getElementById('stock').value;
+    
+    let hasError = false;
+    if (!name) { document.getElementById('nameError').textContent = 'Required'; document.getElementById('nameError').style.display = 'block'; hasError = true; }
+    if (!description) { document.getElementById('descError').textContent = 'Required'; document.getElementById('descError').style.display = 'block'; hasError = true; }
+    if (!category) { document.getElementById('catError').textContent = 'Required'; document.getElementById('catError').style.display = 'block'; hasError = true; }
+    if (!price || Number(price) < 0) { document.getElementById('priceError').textContent = 'Invalid price'; document.getElementById('priceError').style.display = 'block'; hasError = true; }
+    if (!stock || Number(stock) < 0) { document.getElementById('stockError').textContent = 'Invalid stock'; document.getElementById('stockError').style.display = 'block'; hasError = true; }
+    
+    if (croppedFiles.length < 3) {
+      document.getElementById('imageError').textContent = 'Please crop and upload at least 3 images.';
+      document.getElementById('imageError').style.display = 'block';
+      hasError = true;
+    }
+    
+    if (hasError) return;
+    
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('category', category);
+    formData.append('price', price);
+    formData.append('stock', stock);
+    
+    croppedFiles.forEach((item) => {
+      formData.append('images', item.file);
+    });
+
+    submitBtn.textContent = 'Uploading...';
+    submitBtn.disabled = true;
+
+    try {
+      const res = await axios.post('/admin/products/add', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      window.location.href = res.data.redirectUrl;
+    } catch (err) {
+      document.getElementById('imageError').textContent = err.response?.data?.message || 'Something went wrong while adding the product.';
+      document.getElementById('imageError').style.display = 'block';
+      submitBtn.textContent = 'Add Product';
+      submitBtn.disabled = false;
+    }
+  });
+</script>

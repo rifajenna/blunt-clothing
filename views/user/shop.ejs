@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shop | BLUNT</title>
+  <link rel="stylesheet" href="/css/layout.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #ffffff; color: #111827; margin: 0; padding: 0; }
+    
+    /* Layout */
+    .shop-container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; display: flex; gap: 50px; }
+    
+    /* Sidebar */
+    .sidebar { width: 250px; flex-shrink: 0; }
+    .filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .filter-title { font-size: 1.1rem; font-weight: 700; }
+    .clear-all { font-size: 0.75rem; color: #2563eb; text-decoration: none; font-weight: 500; }
+    .clear-all:hover { text-decoration: underline; }
+    
+    .filter-section { border-bottom: 1px solid #f3f4f6; padding-bottom: 24px; margin-bottom: 24px; }
+    .filter-section:last-child { border-bottom: none; }
+    .filter-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; cursor: pointer; }
+    .filter-section-title { font-size: 0.85rem; font-weight: 700; text-transform: capitalize; }
+    
+    /* Checkboxes */
+    .checkbox-group { display: flex; flex-direction: column; gap: 12px; }
+    .checkbox-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .checkbox-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: #111827; cursor: pointer; }
+    .checkbox-label { font-size: 0.8rem; color: #4b5563; }
+    
+    /* Sizes */
+    .size-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .size-box { border: 1px solid #e5e7eb; border-radius: 4px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #374151; cursor: pointer; transition: all 0.15s; }
+    .size-box:hover { border-color: #111827; }
+    .size-box.active { background: #111827; color: #fff; border-color: #111827; }
+
+    /* Price inputs */
+    .price-inputs { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .price-input-wrapper { flex: 1; position: relative; }
+    .price-input-wrapper span { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8rem; }
+    .price-inputs input { width: 100%; padding: 8px 10px 8px 22px; border: 1px solid #e5e7eb; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.8rem; outline: none; }
+    .price-inputs input:focus { border-color: #9ca3af; }
+    .btn-apply-price { width: 100%; padding: 8px; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; margin-top: 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+    .btn-apply-price:hover { background: #e5e7eb; }
+
+    /* Main Content */
+    .main-content { flex: 1; }
+    
+    .shop-header { margin-bottom: 30px; }
+    .shop-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; }
+    .shop-subtitle { font-size: 0.85rem; color: #6b7280; }
+    
+    .shop-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f3f4f6; }
+    .results-count { font-size: 0.8rem; color: #6b7280; }
+    
+    .sort-dropdown { border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 12px; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: #374151; outline: none; background: #fff; cursor: pointer; }
+    
+    /* Search Bar in Shop */
+    .shop-search { position: relative; max-width: 300px; width: 100%; margin-bottom: 24px; }
+    .shop-search input { width: 100%; padding: 10px 35px 10px 14px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; font-family: 'Inter', sans-serif; outline: none; background: #f9fafb; transition: all 0.2s; }
+    .shop-search input:focus { background: #fff; border-color: #9ca3af; }
+    .shop-search button { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #9ca3af; }
+
+    /* Product Grid */
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 32px; }
+    
+    .product-card { position: relative; transition: transform 0.2s; }
+    .product-card:hover { transform: translateY(-4px); }
+    
+    .product-image-wrap { position: relative; width: 100%; aspect-ratio: 4/5; background: #f3f4f6; border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+    .product-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .badge-category { position: absolute; top: 12px; left: 12px; background: #111827; color: #fff; font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; z-index: 2; text-transform: lowercase; }
+    .btn-wishlist { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; background: #ffffff; border: none; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #111827; cursor: pointer; z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.15s; }
+    .btn-wishlist:hover { transform: scale(1.1); }
+    
+    .product-info { display: flex; flex-direction: column; gap: 4px; }
+    .product-name { font-size: 0.9rem; font-weight: 700; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .product-brand { font-size: 0.75rem; color: #6b7280; }
+    
+    .product-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+    .product-price { font-size: 1rem; font-weight: 800; color: #111827; }
+    .btn-add-cart { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+    .btn-add-cart:hover { opacity: 0.85; }
+
+    /* Empty */
+    .empty-state { grid-column: span 3; text-align: center; padding: 60px 20px; }
+    .empty-state i { font-size: 3rem; color: #d1d5db; margin-bottom: 16px; display: block; }
+    .empty-state p { color: #6b7280; font-size: 0.9rem; }
+
+    /* Pagination */
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 50px; }
+    .page-btn { width: 36px; height: 36px; border: 1px solid #e5e7eb; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 500; color: #374151; text-decoration: none; transition: all 0.15s; }
+    .page-btn:hover { border-color: #111827; }
+    .page-btn.active { background: #111827; color: #fff; border-color: #111827; }
+    
+    @media (max-width: 900px) {
+      .shop-container { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .product-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<%- include('partials/header') %>
+
+<form id="shopForm" action="/user/shop" method="GET">
+<div class="shop-container">
+
+  <!-- Sidebar Filters -->
+  <aside class="sidebar">
+    <div class="filter-header">
+      <h3 class="filter-title">Filters</h3>
+      <a href="/user/shop" class="clear-all">Clear All</a>
+    </div>
+
+    <!-- Categories -->
+    <div class="filter-section">
+      <div class="filter-section-header">
+        <span class="filter-section-title">Categories</span>
+        <i class="ri-arrow-up-s-line"></i>
+      </div>
+      <div class="checkbox-group">
+        <% categories.forEach(cat => { %>
+          <label class="checkbox-item">
+            <input type="checkbox" name="category" value="<%= cat._id %>" <%= selectedCategories.includes(cat._id.toString()) ? 'checked' : '' %> onchange="document.getElementById('shopForm').submit()">
+            <span class="checkbox-label"><%= cat.name %></span>
+          </label>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Sizes (Static visual only to match screenshot) -->
+    <div class="filter-section">
+      <div class="filter-section-header">
+        <span class="filter-section-title">Size</span>
+        <i class="ri-arrow-up-s-line"></i>
+      </div>
+      <div class="size-grid">
+        <div class="size-box">S</div>
+        <div class="size-box">M</div>
+        <div class="size-box">L</div>
+        <div class="size-box">XL</div>
+        <div class="size-box">XXL</div>
+      </div>
+    </div>
+
+    <!-- Price Range -->
+    <div class="filter-section">
+      <div class="filter-section-header">
+        <span class="filter-section-title">Price Range</span>
+        <i class="ri-arrow-up-s-line"></i>
+      </div>
+      <div class="price-inputs">
+        <div class="price-input-wrapper">
+          <span>₹</span>
+          <input type="number" name="minPrice" placeholder="Min" value="<%= minPrice || '' %>" min="0">
+        </div>
+        <div style="color: #9ca3af;">-</div>
+        <div class="price-input-wrapper">
+          <span>₹</span>
+          <input type="number" name="maxPrice" placeholder="Max" value="<%= maxPrice || '' %>" min="0">
+        </div>
+      </div>
+      <button type="submit" class="btn-apply-price">Apply Price</button>
+    </div>
+
+  </aside>
+
+  <!-- Main Grid -->
+  <main class="main-content">
+    
+    <div class="shop-header">
+      <h1 class="shop-title">Shop fits</h1>
+      <p class="shop-subtitle">Discover your perfect wears</p>
+    </div>
+
+    <div class="shop-search">
+      <input type="text" name="search" placeholder="Search products..." value="<%= search %>" autocomplete="off">
+      <button type="submit"><i class="ri-search-line"></i></button>
+    </div>
+
+    <div class="shop-toolbar">
+      <div class="results-count"><%= totalProducts %> products found</div>
+      
+      <select name="sort" class="sort-dropdown" onchange="document.getElementById('shopForm').submit()">
+        <option value="featured" <%= sort === 'featured' ? 'selected' : '' %>>Sort by: Featured</option>
+        <option value="price-asc" <%= sort === 'price-asc' ? 'selected' : '' %>>Price: Low to High</option>
+        <option value="price-desc" <%= sort === 'price-desc' ? 'selected' : '' %>>Price: High to Low</option>
+        <option value="name-asc" <%= sort === 'name-asc' ? 'selected' : '' %>>Name: A to Z</option>
+        <option value="name-desc" <%= sort === 'name-desc' ? 'selected' : '' %>>Name: Z to A</option>
+      </select>
+    </div>
+
+    <div class="product-grid">
+      <% if (products.length === 0) { %>
+        <div class="empty-state">
+          <i class="ri-box-3-line"></i>
+          <p>No products found matching your criteria.</p>
+        </div>
+      <% } else { %>
+        <% products.forEach(product => { %>
+          <div class="product-card">
+            <div class="product-image-wrap">
+              <span class="badge-category"><%= product.category ? product.category.name : 'Uncategorized' %></span>
+              <button type="button" class="btn-wishlist" onclick="toggleWishlist('<%= product._id %>')">
+                <i class="ri-heart-line" id="wishlist-icon-<%= product._id %>"></i>
+              </button>
+              <% if (product.images && product.images.length > 0) { %>
+                <a href="/user/shop/product/<%= product._id %>">
+                  <img src="<%= product.images[0] %>" alt="<%= product.name %>">
+                </a>
+              <% } else { %>
+                <div style="width:100%; height:100%; background:#e5e7eb;"></div>
+              <% } %>
+            </div>
+            <div class="product-info">
+              <a href="/user/shop/product/<%= product._id %>" style="text-decoration: none; color: inherit;">
+                <div class="product-name"><%= product.name %></div>
+              </a>
+              <div class="product-brand"><%= product.category ? product.category.name : 'Blunt' %></div>
+              <div class="product-bottom">
+                <div class="product-price">₹<%= product.price.toLocaleString('en-IN') %></div>
+                <button type="button" class="btn-add-cart" onclick="addToCart('<%= product._id %>')">Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+      <div class="pagination">
+        <% if (currentPage > 1) { %>
+          <button type="submit" name="page" value="<%= currentPage - 1 %>" class="page-btn"><i class="ri-arrow-left-s-line"></i></button>
+        <% } %>
+        
+        <% for(let p = 1; p <= totalPages; p++) { %>
+          <button type="submit" name="page" value="<%= p %>" class="page-btn <%= p === currentPage ? 'active' : '' %>"><%= p %></button>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+          <button type="submit" name="page" value="<%= currentPage + 1 %>" class="page-btn"><i class="ri-arrow-right-s-line"></i></button>
+        <% } %>
+      </div>
+    <% } %>
+
+  </main>
+</div>
+</form>
+
+<%- include('partials/footer') %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  async function addToCart(productId) {
+    try {
+      const response = await fetch('/user/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, quantity: 1 })
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Added to cart',
+          text: data.message,
+          showCancelButton: true,
+          confirmButtonColor: '#111827',
+          cancelButtonColor: '#6b7280',
+          confirmButtonText: 'View Cart',
+          cancelButtonText: 'Continue Shopping'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/user/cart';
+          }
+        });
+      } else {
+        if (response.status === 401) {
+           window.location.href = '/user/login';
+           return;
+        }
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: data.message
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function toggleWishlist(productId) {
+    try {
+      const response = await fetch('/user/wishlist/toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId })
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        const icon = document.getElementById(`wishlist-icon-${productId}`);
+        if (data.message.includes('Added')) {
+          icon.classList.remove('ri-heart-line');
+          icon.classList.add('ri-heart-fill');
+          icon.style.color = '#ef4444';
+        } else {
+          icon.classList.remove('ri-heart-fill');
+          icon.classList.add('ri-heart-line');
+          icon.style.color = '#111827';
+        }
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Updated Wishlist',
+          text: data.message,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000
+        });
+      } else {
+        if (response.status === 401) {
+           window.location.href = '/user/login';
+           return;
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+</script>
+
+</body>
+</html>

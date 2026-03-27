@@ -8,7 +8,7 @@ export const showLogin = (req, res) => {
   res.render("admin/pages/login", {
     title: "ADMIN LOGIN",
     showLayout: false,
-    cssFile: "",
+    cssFile: "admin-auth.css",
     pageJS: "login.js",
   });
 };
@@ -33,12 +33,12 @@ export const login = async (req, res) => {
 };
 
 export const createPermanentAdmin = async () => {
-  await Admin.deleteMany({});  // wipe old admin
+  await Admin.deleteMany({});  
 
   const hashedPassword = await bcrypt.hash("admin123", 10);
   await Admin.create({
     name: "Super Admin",
-    email: "rifajennah123@gmail.com",  // your actual email
+    email: "rifajennah123@gmail.com", 
     password: hashedPassword,
   });
   console.log("Permanent Admin Created");

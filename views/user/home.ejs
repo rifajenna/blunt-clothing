@@ -16,83 +16,109 @@
 <%- include('partials/header') %>
 
 <!-- HERO -->
-
-<section class="hero">
-
-<div class="hero-content">
-
-<h1>Welcome <%= user.name %> 👋</h1>
-<p>Discover premium streetwear designed for bold personalities.</p>
-
-<a href="/shop" class="btn">Shop Now</a>
-
-</div>
-
+<section class="hero-v2">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="edition-badge">Autumn | Winter '24 Edition</span>
+    <h1>URBAN<br>ESSENTIALS</h1>
+    <div class="hero-btns">
+      <a href="/user/shop?category=6629910a3000b21868350ae2" class="btn btn-white">Shop Hoodies</a>
+      <a href="/user/shop?category=6629910a3000b21868350ae3" class="btn btn-outline">Shop Pants</a>
+    </div>
+  </div>
 </section>
 
 
 <!-- CATEGORIES -->
-
 <section class="categories">
-
-<h2>Shop By Category</h2>
-
-<div class="category-grid">
-
-<div class="category-card">
-<img src="/images/shirt.jpg">
-<h3>Shirts</h3>
-</div>
-
-<div class="category-card">
-<img src="/images/tshirt.jpg">
-<h3>T-Shirts</h3>
-</div>
-
-<div class="category-card">
-<img src="/images/jacket.jpg">
-<h3>Jackets</h3>
-</div>
-
-</div>
-
+  <h2>Shop By Category</h2>
+  <div class="category-grid">
+    <% if (categories && categories.length > 0) { %>
+      <% categories.forEach(cat => { %>
+        <div class="category-card" onclick="window.location.href='/user/shop?category=<%= cat._id %>'">
+          <img src="<%= cat.image || '/images/default-cat.jpg' %>" alt="<%= cat.name %>">
+          <div class="category-overlay">
+            <h3><%= cat.name %></h3>
+            <span>Explore Collection</span>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>No categories available.</p>
+    <% } %>
+  </div>
 </section>
 
-
 <!-- FEATURED PRODUCTS -->
-
 <section class="products">
-
-<h2>Featured Products</h2>
-
-<div class="product-grid">
-
-<div class="product-card">
-<img src="/images/product1.jpg">
-<h4>Black Classic Shirt</h4>
-<p>₹1,999</p>
-<button>Add to Cart</button>
-</div>
-
-<div class="product-card">
-<img src="/images/product2.jpg">
-<h4>Oversized Tee</h4>
-<p>₹1,299</p>
-<button>Add to Cart</button>
-</div>
-
-<div class="product-card">
-<img src="/images/product3.jpg">
-<h4>Denim Jacket</h4>
-<p>₹3,499</p>
-<button>Add to Cart</button>
-</div>
-
-</div>
-
+  <h2>Featured Products</h2>
+  <div class="product-grid">
+    <% if (featuredProducts && featuredProducts.length > 0) { %>
+      <% featuredProducts.forEach(product => { %>
+        <div class="product-card">
+          <div class="product-image-wrap" onclick="window.location.href='/user/shop/product/<%= product._id %>'">
+            <img src="<%= product.images[0] %>" alt="<%= product.name %>">
+            <% if (product.category) { %>
+              <span class="badge-category"><%= product.category.name %></span>
+            <% } %>
+          </div>
+          <div class="product-info">
+            <h4><%= product.name %></h4>
+            <p class="price">₹<%= product.price.toLocaleString() %></p>
+            <button class="btn-add-cart" onclick="addToCart('<%= product._id %>')">Add to Cart</button>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>No featured products available.</p>
+    <% } %>
+  </div>
 </section>
 
 <%- include('partials/footer') %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  async function addToCart(productId) {
+    try {
+      const response = await fetch('/user/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, quantity: 1 })
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Added to cart',
+          text: data.message,
+          showCancelButton: true,
+          confirmButtonColor: '#111827',
+          cancelButtonColor: '#6b7280',
+          confirmButtonText: 'View Cart',
+          cancelButtonText: 'Continue Shopping'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/user/cart';
+          }
+        });
+      } else {
+        if (response.status === 401) {
+           window.location.href = '/user/login';
+           return;
+        }
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: data.message
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+</script>
 
 </body>
 </html>

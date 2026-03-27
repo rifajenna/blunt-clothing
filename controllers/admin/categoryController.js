@@ -24,7 +24,7 @@ export const getCategories = async (req, res) => {
     res.render("admin/pages/categories", {
       title: "Categories",
       showLayout: true,
-      cssFile: "dashboard.css", // Uses existing dashboard CSS style equivalent to users
+      cssFile: "categories.css", 
       categories,
       totalPages: Math.ceil(totalCategories / limit),
       currentPage: page,
@@ -37,17 +37,15 @@ export const getCategories = async (req, res) => {
   }
 };
 
-// GET /admin/categories/add
 export const showAddCategory = (req, res) => {
   res.render("admin/pages/add-category", {
     title: "Add Category",
     showLayout: true,
-    cssFile: "",
+    cssFile: "category-form.css",
     pageJS: "",
   });
 };
 
-// POST /admin/categories/add
 export const addCategory = async (req, res) => {
   try {
     const { name, description } = req.body;
@@ -75,7 +73,7 @@ export const addCategory = async (req, res) => {
   }
 };
 
-// GET /admin/categories/edit/:id
+
 export const showEditCategory = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
@@ -86,7 +84,7 @@ export const showEditCategory = async (req, res) => {
     res.render("admin/pages/edit-category", {
       title: "Edit Category",
       showLayout: true,
-      cssFile: "",
+      cssFile: "category-form.css",
       category,
       pageJS: "",
     });
@@ -96,7 +94,6 @@ export const showEditCategory = async (req, res) => {
   }
 };
 
-// POST /admin/categories/edit/:id
 export const editCategory = async (req, res) => {
   try {
     const { name, description } = req.body;

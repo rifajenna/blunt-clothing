@@ -1,0 +1,39 @@
+.users-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+
+/* User cell */
+.user-cell { display: flex; align-items: center; gap: 10px; }
+.u-avatar { width: 36px; height: 36px; border-radius: 50%; background: #e5e7eb; border: 1px solid #d1d5db; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: #4b5563; flex-shrink: 0; overflow: hidden; }
+.u-name { font-weight: 600; color: #111827; font-size: 0.875rem; }
+.u-email { font-size: 0.78rem; color: #6b7280; margin-top: 1px; }
+
+/* Contact cell */
+.contact-cell { display: flex; flex-direction: column; gap: 3px; }
+.contact-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #6b7280; }
+.contact-item i { font-size: 0.75rem; color: #9ca3af; }
+
+/* Status badge */
+.badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+.badge-active  { background: #f0fdf4; color: #10b981; }
+.badge-blocked { background: #fef2f2; color: #ef4444; }
+
+/* Action icons */
+.action-btns { display: flex; align-items: center; gap: 4px; }
+.action-btn { width: 32px; height: 32px; border: none; background: transparent; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; color: #6b7280; transition: background 0.12s, color 0.12s; }
+.action-btn:hover { background: #f3f4f6; }
+.action-btn.block-btn:hover  { background: #fef2f2; color: #ef4444; }
+.action-btn.unblock-btn:hover { background: #f0fdf4; color: #10b981; }
+
+/* Empty */
+.empty-state { text-align: center; padding: 52px 24px; color: #9ca3af; }
+.empty-state i { font-size: 2.2rem; margin-bottom: 10px; display: block; }
+.empty-state p { font-size: 0.875rem; }
+
+/* Modal Icons */
+.modal-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 16px; }
+.modal-icon.block   { background: #fef2f2; color: #ef4444; }
+.modal-icon.unblock { background: #f0fdf4; color: #10b981; }
+
+.btn-modal-confirm.block   { background: #ef4444; color: #fff; }
+.btn-modal-confirm.unblock { background: #10b981; color: #fff; }
+.btn-modal-cancel { flex: 1; padding: 10px; border: 1.5px solid #e5e7eb; border-radius: 8px; background: transparent; color: #374151; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: border-color 0.15s; }
+.btn-modal-cancel:hover { border-color: #9ca3af; }
