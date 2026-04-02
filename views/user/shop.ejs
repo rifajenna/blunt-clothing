@@ -23,10 +23,10 @@
     .filter-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; cursor: pointer; }
     .filter-section-title { font-size: 0.85rem; font-weight: 700; text-transform: capitalize; }
     
-    /* Checkboxes */
+    /* Radios */
     .checkbox-group { display: flex; flex-direction: column; gap: 12px; }
     .checkbox-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-    .checkbox-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: #111827; cursor: pointer; }
+    .checkbox-item input[type="radio"] { width: 16px; height: 16px; accent-color: #111827; cursor: pointer; }
     .checkbox-label { font-size: 0.8rem; color: #4b5563; }
     
     /* Sizes */
@@ -128,7 +128,7 @@
       <div class="checkbox-group">
         <% categories.forEach(cat => { %>
           <label class="checkbox-item">
-            <input type="checkbox" name="category" value="<%= cat._id %>" <%= selectedCategories.includes(cat._id.toString()) ? 'checked' : '' %> onchange="document.getElementById('shopForm').submit()">
+            <input type="radio" name="category" value="<%= cat._id %>" <%= selectedCategories.includes(cat._id.toString()) ? 'checked' : '' %> onchange="document.getElementById('shopForm').submit()">
             <span class="checkbox-label"><%= cat.name %></span>
           </label>
         <% }) %>
