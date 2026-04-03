@@ -28,8 +28,9 @@
         <label for="category">Category <span style="color:#ef4444">*</span></label>
         <select id="category" name="category" class="form-control">
           <% categories.forEach(cat=> { %>
-            <option value="<%= cat._id %>" <%=product.category.toString()===cat._id.toString() ? 'selected' : '' %>><%=
-                cat.name %>
+          <option value="<%= cat._id %>" 
+  <%= (product?.category?._id?.toString() || product?.category?.toString()) === cat._id.toString() ? 'selected' : '' %>>
+  <%= cat.name %>
             </option>
             <% }) %>
         </select>
@@ -86,9 +87,12 @@
   </div>
 </div>
 
+<script id="product-images-data" type="application/json">
+  <%- JSON.stringify(product.images || []) %>
+</script>
 <script>
   // Initial state passed from EJS
-  let existingImages = <%- JSON.stringify(product.images || []) %>;
+  let existingImages = JSON.parse(document.getElementById('product-images-data').textContent);
   let croppedFiles = []; // Array of new { file, url }
 
   let currentFile = null;

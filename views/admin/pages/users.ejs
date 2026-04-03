@@ -90,7 +90,10 @@
                   <button
                     class="action-btn <%= user.isBlocked ? 'unblock-btn' : 'block-btn' %>"
                     title="<%= user.isBlocked ? 'Unblock' : 'Block' %>"
-                    onclick="openConfirm('<%= user._id %>', '<%= (user.name || user.email).replace(/'/g, "\\'") %>', '<%= user.isBlocked %>')"
+                    data-id="<%= user._id %>"
+                    data-name="<%= user.name || user.email %>"
+                    data-blocked="<%= user.isBlocked %>"
+                    onclick="openConfirm(this.dataset.id, this.dataset.name, this.dataset.blocked)"
                   >
                     <i class="bi bi-slash-circle"></i>
                   </button>

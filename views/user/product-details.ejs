@@ -268,7 +268,7 @@
 
   // Quantity Logic
   const qtyInput = document.getElementById('qty');
-  const maxAllowed = Math.min(<%= product.stock %>, 5);
+  const maxAllowed = Math.min(Number('<%= product.stock %>'), 5);
   
   function updateQty(change) {
     if(!qtyInput) return;

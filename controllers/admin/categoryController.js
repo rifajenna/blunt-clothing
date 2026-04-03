@@ -1,14 +1,12 @@
 import Category from "../../models/Category.js";
 import { sendResponse } from "../../utils/sendResponse.js";
 
-// GET /admin/categories
 export const getCategories = async (req, res) => {
   try {
     const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
     const limit = 5;
 
-    // Filter by name and ensure it's not soft-deleted
     const query = {
       isDeleted: false,
       name: { $regex: search, $options: "i" },
@@ -104,7 +102,6 @@ export const editCategory = async (req, res) => {
       return sendResponse(res, { code: 404, message: "Category not found" });
     }
 
-    // Check if new name exists elsewhere
     const existingCategory = await Category.findOne({
       name: { $regex: new RegExp(`^${name}$`, "i") },
       _id: { $ne: categoryId }
@@ -131,7 +128,7 @@ export const editCategory = async (req, res) => {
   }
 };
 
-// PATCH /admin/categories/soft-delete/:id
+
 export const softDeleteCategory = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);

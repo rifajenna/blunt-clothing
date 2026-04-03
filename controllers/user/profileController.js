@@ -27,11 +27,9 @@ export const showLandingPage = async (req, res) => {
 export const showHome = async (req, res) => {
   try {
     const user = await User.findById(req.session.user);
-    
-    // Fetch active categories (limit to 3 for the home page grid)
+  
     const categories = await Category.find({ isDeleted: false }).limit(3);
     
-    // Fetch latest 4-6 products as "Featured"
     const featuredProducts = await Product.find({ isDeleted: false })
       .sort({ createdAt: -1 })
       .limit(6)

@@ -30,17 +30,16 @@ export const getShopPage = async (req, res) => {
       category: { $in: activeCategoryIds }
     };
 
-    // If specific categories selected in filter, intersect them
+    
     if (selectedCategories.length > 0) {
       query.category = { $in: selectedCategories.filter(id => activeCategoryIds.includes(id)) };
     }
 
-    // Search query
     if (search) {
       query.name = { $regex: search, $options: "i" };
     }
 
-    // Price query
+ 
     if (minPrice !== null || maxPrice !== null) {
       query.price = {};
       if (minPrice !== null) query.price.$gte = minPrice;
@@ -58,11 +57,10 @@ export const getShopPage = async (req, res) => {
       sortConfig = { name: -1 };
     }
 
-    // Fetch total matching products for pagination
     const totalProducts = await Product.countDocuments(query);
     const totalPages = Math.ceil(totalProducts / limit);
 
-    // Fetch paginated and sorted products
+  
     const products = await Product.find(query)
       .populate("category", "name")
       .sort(sortConfig)
@@ -94,7 +92,6 @@ export const getProductDetails = async (req, res) => {
   try {
     const productId = req.params.id;
 
-    // Fetch the product natively
     const product = await Product.findById(productId).populate("category");
 
     if (!product || product.isDeleted || !product.category || product.category.isDeleted) {

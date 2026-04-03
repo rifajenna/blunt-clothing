@@ -16,7 +16,7 @@ const cartSchema = new mongoose.Schema({
       type: Number,
       default: 1,
       min: 1,
-      max: 5 // Maximum 5 per item as per requirement
+      max: 5 
     },
     price: {
       type: Number,

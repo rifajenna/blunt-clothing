@@ -37,7 +37,7 @@ const router = express.Router();
 
 router.use(adminLayout);
 
-// Auth
+//Auth
 router.get("/login", showLogin);
 router.post("/login", wrapAsync(login));
 router.get("/logout", logoutUser);

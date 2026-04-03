@@ -70,7 +70,7 @@ export const addProduct = async (req, res) => {
       return res.status(400).json({ message: "Minimum 3 images are required" });
     }
 
-    // Extract file paths to save in DB
+  
     const imagePaths = req.files.map(file => `/uploads/products/${file.filename}`);
 
     const newProduct = new Product({
@@ -129,7 +129,7 @@ export const editProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // New uploaded images
+  
     const newImagePaths = req.files ? req.files.map(file => `/uploads/products/${file.filename}`) : [];
 
     const totalImagesCount = imagesToKeep.length + newImagePaths.length;
@@ -138,7 +138,7 @@ export const editProduct = async (req, res) => {
       return res.status(400).json({ message: "Minimum 3 images are required" });
     }
 
-    // Identify images that were deleted to remove them from disk
+   
     const imagesToDelete = product.images.filter(img => !imagesToKeep.includes(img));
     for (const imagePath of imagesToDelete) {
       const fullPath = path.join(process.cwd(), "public", imagePath);
@@ -147,7 +147,6 @@ export const editProduct = async (req, res) => {
       }
     }
 
-    // Update product fields
     product.name = name;
     product.description = description;
     product.price = Number(price);

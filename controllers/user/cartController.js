@@ -101,7 +101,7 @@ export const addToCart = async (req, res) => {
 export const updateCartQuantity = async (req, res) => {
   try {
     const userId = req.session.user;
-    const { productId, change } = req.body; // change is +1 or -1
+    const { productId, change } = req.body; 
 
     const cart = await Cart.findOne({ user: userId });
     if (!cart) return res.status(404).json({ success: false, message: "Cart not found" });
@@ -116,10 +116,10 @@ export const updateCartQuantity = async (req, res) => {
 
     if (newQty < 1) return res.status(400).json({ success: false, message: "Quantity cannot be less than 1" });
     
-    // Max Limit (5)
+   
     if (newQty > 5) return res.status(400).json({ success: false, message: "Maximum 5 units allowed" });
 
-    // Stock Validation
+    
     if (newQty > product.stock) {
       return res.status(400).json({ success: false, message: "Requested quantity exceeds available stock" });
     }
